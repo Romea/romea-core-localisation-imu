@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>romea_localisation_imu</name>
+  <version>0.0.0</version>
+  <description>The romea_localisation_imu package</description>
+
+  <author email="jean.laneurit@inrae.fr">Jean Laneurit</author>
+  <maintainer email="jean.laneurit@inrae.fr">Jean Laneurit</maintainer>
+
+  <!-- One license tag required, multiple allowed, one license per tag -->
+  <!-- Commonly used license strings: -->
+  <!--   BSD, MIT, Boost Software License, GPLv2, GPLv3, LGPLv2.1, LGPLv3 -->
+  <license>TODO</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <depend>romea_imu</depend>
+  <depend>romea_localisation</depend>
+</package>

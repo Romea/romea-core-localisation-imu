@@ -22,9 +22,9 @@ class LocalisationIMUPlugin
 
 public :
 
-  LocalisationIMUPlugin(std::unique_ptr<IMUAHRS> imu,
-                        const double &minimalRate);
+  LocalisationIMUPlugin(std::unique_ptr<IMUAHRS> imu);
 
+  void enableDebugLog(const std::string & logFilename);
 
   bool computeAngularSpeed(const Duration & stamp,
                            const double & linearSpeed,

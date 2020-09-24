@@ -9,23 +9,30 @@ const double LINEAR_SPEED_EPSILON = 0.001;
 namespace romea {
 
 //-----------------------------------------------------------------------------
-LocalisationIMUPlugin::LocalisationIMUPlugin(std::unique_ptr<IMUAHRS> imu,
-                                             const double & minimalRate):
+LocalisationIMUPlugin::LocalisationIMUPlugin(std::unique_ptr<IMUAHRS> imu):
   imu_(std::move(imu)),
   angularSpeedBias_(0),
   angularSpeedBiasEstimator_(imu_->getRate(),
                              imu_->getAccelerationStd(),
                              imu_->getAngularSpeedStd()),
   inertialMeasurementRateDiagnostic_("inertial_measurements",
-                                     minimalRate,minimalRate*0.1),
+                                     imu_->getRate(),
+                                     imu_->getRate()*0.1),
   attitudeRateDiagnostic_("attitude",
-                          minimalRate,minimalRate*0.1),
+                          imu_->getRate(),
+                          imu_->getRate()*0.1),
   inertialMeasurementDiagnostic_(imu_->getAccelerationRange(),
                                  imu_->getAngularSpeedRange()),
   attitudeDiagnostic_(),
   debugLogger_()
 {
 
+}
+
+//-----------------------------------------------------------------------------
+void LocalisationIMUPlugin::enableDebugLog(const std::string & logFilename)
+{
+  debugLogger_.init(logFilename);
 }
 
 //-----------------------------------------------------------------------------
@@ -50,7 +57,6 @@ bool LocalisationIMUPlugin::computeAngularSpeed(const Duration & stamp,
       imu_->createAngularSpeedsFrame(angularSpeedAroundXAxis,
                                      angularSpeedAroundYAxis,
                                      angularSpeedAroundZAxis);
-
 
   if(inertialMeasurementRateDiagnostic_.evaluate(stamp)==DiagnosticStatus::OK &&
      inertialMeasurementDiagnostic_.evaluate(accelerations,angularSpeeds)==DiagnosticStatus::OK)

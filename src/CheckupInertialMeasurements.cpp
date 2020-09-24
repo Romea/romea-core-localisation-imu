@@ -1,4 +1,5 @@
 #include "romea_localisation_imu/CheckupInertialMeasurements.hpp"
+#include <iostream>
 
 namespace romea
 {
@@ -51,7 +52,7 @@ void CheckupInertialMeasurements::checkAngularSpeeds_(const AngularSpeedsFrame &
   }
   else
   {
-    addDiagnostic_(DiagnosticStatus::ERROR,"Angular speed data is OK.");
+    addDiagnostic_(DiagnosticStatus::OK,"Angular speed data is OK.");
   }
 }
 
@@ -66,17 +67,17 @@ const DiagnosticReport & CheckupInertialMeasurements::getReport() const
 //-----------------------------------------------------------------------------
 void CheckupInertialMeasurements::setReportInfos_(const AccelerationsFrame & accelarations)
 {
-  report_.info["acceleration_x"]=accelarations.accelerationAlongXAxis;
-  report_.info["acceleration_y"]=accelarations.accelerationAlongYAxis;
-  report_.info["acceleration_z"]=accelarations.accelerationAlongZAxis;
+  setReportInfo(report_,"acceleration_x",accelarations.accelerationAlongXAxis);
+  setReportInfo(report_,"acceleration_y",accelarations.accelerationAlongYAxis);
+  setReportInfo(report_,"acceleration_z",accelarations.accelerationAlongZAxis);
 }
 
 //-----------------------------------------------------------------------------
 void CheckupInertialMeasurements::setReportInfos_(const AngularSpeedsFrame & angularSpeeds)
 {
-  report_.info["angular_speed_x"]=angularSpeeds.angularSpeedAroundXAxis;
-  report_.info["angular_speed_y"]=angularSpeeds.angularSpeedAroundYAxis;
-  report_.info["angular_speed_z"]=angularSpeeds.angularSpeedAroundZAxis;
+  setReportInfo(report_,"angular_speed_x",angularSpeeds.angularSpeedAroundXAxis);
+  setReportInfo(report_,"angular_speed_y",angularSpeeds.angularSpeedAroundYAxis);
+  setReportInfo(report_,"angular_speed_z",angularSpeeds.angularSpeedAroundZAxis);
 }
 
 //-----------------------------------------------------------------------------

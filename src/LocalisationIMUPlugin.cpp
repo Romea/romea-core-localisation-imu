@@ -102,7 +102,7 @@ bool LocalisationIMUPlugin::computeAttitude(const Duration & stamp,
 }
 
 //-----------------------------------------------------------------------------
-DiagnosticReport LocalisationIMUPlugin::makeDiagnosticReport()
+DiagnosticReport LocalisationIMUPlugin::makeDiagnosticReport()const
 {
   DiagnosticReport report;
   report += inertialMeasurementRateDiagnostic_.getReport();

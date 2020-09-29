@@ -42,7 +42,7 @@ public :
                        const double & courseAngle,
                        ObservationAttitude & attitude);
 
-  DiagnosticReport makeDiagnosticReport();
+  DiagnosticReport makeDiagnosticReport()const;
 
 private:
 

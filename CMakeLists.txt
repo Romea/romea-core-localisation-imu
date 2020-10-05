@@ -1,44 +1,78 @@
-cmake_minimum_required(VERSION 2.8.3)
-project(romea_localisation_imu)
+cmake_minimum_required(VERSION 3.5)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -std=c++17")
+project(
+  "romea_localisation_imu"
+  VERSION 0.1.0
+  #  DESCRIPTION
+  #  HOMEPAGE_URL
+  LANGUAGES CXX)
 
+find_package(romea_common REQUIRED)
+find_package(romea_imu REQUIRED)
+find_package(romea_localisation)
 
-#######################
-## Find dependencies ##
-#######################
-set(${PROJECT_NAME}_CATKIN_DEPS romea_imu romea_localisation)
-find_package(catkin REQUIRED COMPONENTS ${${PROJECT_NAME}_CATKIN_DEPS})
-find_package(romea_filtering REQUIRED)
-find_package( PkgConfig )
-pkg_check_modules( EIGEN3 REQUIRED eigen3 )
+add_library(${PROJECT_NAME} SHARED
+  src/AngularSpeedBias.cpp
+  src/CheckupAttitude.cpp
+  src/CheckupInertialMeasurements.cpp
+  src/LocalisationIMUPlugin.cpp
+  )
 
-###################################
-## catkin specific configuration ##
-###################################
-catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS ${${PROJECT_NAME}_CATKIN_DEPS})
+target_include_directories(${PROJECT_NAME} PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-###########
-## build ##
-###########
-include_directories(
-    include
-    /usr/include/eigen3
-    SYSTEM ${catkin_INCLUDE_DIRS}
-#    SYSTEM ${EIGEN3_INCLUDE_DIRS},
-    SYSTEM ${romea_filtering_INCLUDE_DIRS})
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
+  ${romea_imu_INCLUDE_DIRS}
+  ${romea_localisation_INCLUDE_DIRS}
+  )
 
-add_library(romea_localisation_imu
-    src/AngularSpeedBias.cpp
-    src/CheckupAttitude.cpp
-    src/CheckupInertialMeasurements.cpp
-    src/LocalisationIMUPlugin.cpp)
+target_compile_options(${PROJECT_NAME} PRIVATE
+  -Wall -Wextra -O3 -std=c++17)
 
-target_link_libraries(romea_localisation_imu ${catkin_LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PUBLIC
+  romea_imu::romea_imu
+  romea_localisation::romea_localisation)
 
-if(CATKIN_ENABLE_TESTING)
+include(GNUInstallDirs)
+
+install(
+  TARGETS ${PROJECT_NAME}
+  EXPORT ${PROJECT_NAME}Targets
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+install(FILES package.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME})
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+  "${PROJECT_NAME}ConfigVersion.cmake"
+  VERSION ${PROJECT_VERSION}
+  COMPATIBILITY SameMajorVersion)
+
+configure_package_config_file(
+  "${PROJECT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in"
+  "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake" INSTALL_DESTINATION
+  ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake)
+
+install(
+  EXPORT ${PROJECT_NAME}Targets
+  FILE ${PROJECT_NAME}Targets.cmake
+  NAMESPACE ${PROJECT_NAME}::
+  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake)
+
+install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+  "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/${PROJECT_NAME}/cmake)
+
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
+
+option(BUILD_TESTS "BUILD WITH TESTS" OFF)
+if(BUILD_TESTS)
+  enable_testing()
   add_subdirectory(test)
-endif(CATKIN_ENABLE_TESTING)
+endif(BUILD_TESTS)

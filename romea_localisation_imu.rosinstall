@@ -8,5 +8,5 @@
     local-name: src/romea_localisation
     uri: git@gitlab-ssh.irstea.fr:romea-v2/core/romea_localisation.git
 - git:
-    local-name: src/romea_gps
+    local-name: src/romea_imu
     uri: git@gitlab-ssh.irstea.fr:romea-v2/core/romea_imu.git

@@ -1,4 +1,4 @@
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
+find_package(GTest REQUIRED)
 
 add_executable(${PROJECT_NAME}_test_checkup_attitude test_checkup_attitude.cpp )
 target_link_libraries(${PROJECT_NAME}_test_checkup_attitude ${PROJECT_NAME} ${catkin_LIBRARIES} GTest::GTest GTest::Main)

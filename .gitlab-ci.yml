@@ -20,7 +20,6 @@ before_script:
  - source ros_gitlab_ci/gitlab-ci.bash >/dev/null
  - apt-get install -y -qq libgtest-dev
 
-
 kinetic_catkin_tests:
   image: ros:kinetic-robot
   stage: build

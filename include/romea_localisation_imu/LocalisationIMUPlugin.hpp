@@ -1,5 +1,5 @@
-#ifndef __GPSLocalisationPlugin2_HPP__
-#define __GPSLocalisationPlugin2_HPP__
+#ifndef __IMULocalisationPlugin2_HPP__
+#define __IMULocalisationPlugin2_HPP__
 
 //std
 #include <memory>

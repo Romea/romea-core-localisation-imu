@@ -20,14 +20,6 @@ before_script:
  - source ros_gitlab_ci/gitlab-ci.bash >/dev/null
  - apt-get install -y -qq libgtest-dev
 
-kinetic_catkin_tests:
-  image: ros:kinetic-robot
-  stage: build
-  script:
-    - (cd /usr/src/gtest; cmake . && make && cp *.a /usr/lib/)
-    - catkin build romea_localisation_imu --cmake-args -DBUILD_TESTS=ON
-    - cd build/romea_localisation_imu
-    - GTEST_COLOR=1 ctest --output-on-failure
 
 melodic_catkin_tests:
   image: ros:melodic-robot

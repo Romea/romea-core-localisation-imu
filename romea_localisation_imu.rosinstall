@@ -1,12 +1,12 @@
 - git:
-    local-name: src/romea_common
+    local-name: src/romea_common_core
     uri: git@gitlab-ssh.irstea.fr:romea-v2/core/romea_common.git
 - git:
-    local-name: src/romea_filtering
+    local-name: src/romea_filtering_core
     uri: git@gitlab-ssh.irstea.fr:romea-v2/core/romea_filtering.git
 - git:
-    local-name: src/romea_localisation
+    local-name: src/romea_localisation_core
     uri: git@gitlab-ssh.irstea.fr:romea-v2/core/romea_localisation.git
 - git:
-    local-name: src/romea_imu
+    local-name: src/romea_imu_core
     uri: git@gitlab-ssh.irstea.fr:romea-v2/core/romea_imu.git

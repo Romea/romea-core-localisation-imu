@@ -1,4 +1,4 @@
-#include "romea_localisation_imu/CheckupInertialMeasurements.hpp"
+#include "romea_core_localisation_imu/CheckupInertialMeasurements.hpp"
 #include <iostream>
 
 namespace romea

@@ -5,14 +5,14 @@
 #include <memory>
 
 //romea
-#include <romea_imu/IMUAHRS.hpp>
-#include <romea_common/log/SimpleFileLogger.hpp>
-#include <romea_common/diagnostic/CheckupRate.hpp>
-#include <romea_localisation/ObservationAngularSpeed.hpp>
-#include <romea_localisation/ObservationAttitude.hpp>
-#include "romea_localisation_imu/CheckupInertialMeasurements.hpp"
-#include "romea_localisation_imu/CheckupAttitude.hpp"
-#include "romea_localisation_imu/AngularSpeedBias.hpp"
+#include <romea_core_imu/IMUAHRS.hpp>
+#include <romea_core_common/log/SimpleFileLogger.hpp>
+#include <romea_core_common/diagnostic/CheckupRate.hpp>
+#include <romea_core_localisation/ObservationAngularSpeed.hpp>
+#include <romea_core_localisation/ObservationAttitude.hpp>
+#include "romea_core_localisation_imu/CheckupInertialMeasurements.hpp"
+#include "romea_core_localisation_imu/CheckupAttitude.hpp"
+#include "romea_core_localisation_imu/AngularSpeedBias.hpp"
 
 namespace romea {
 

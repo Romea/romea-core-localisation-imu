@@ -2,8 +2,8 @@
 #define _romea_CheckupAttitude_hpp_
 
 //romea
-#include <romea_common/diagnostic/DiagnosticReport.hpp>
-#include <romea_imu/RollPitchCourseFrame.hpp>
+#include <romea_core_common/diagnostic/DiagnosticReport.hpp>
+#include <romea_core_imu/RollPitchCourseFrame.hpp>
 
 namespace romea {
 

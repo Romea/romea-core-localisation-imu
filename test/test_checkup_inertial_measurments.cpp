@@ -3,7 +3,7 @@
 
 //romea
 #include "helper.hpp"
-#include "romea_localisation_gps/CheckupRMCTrackAngle.hpp"
+#include "romea_core_localisation_gps/CheckupRMCTrackAngle.hpp"
 
 //romea::RMCFrame minimalGoodRMCFrame()
 //{

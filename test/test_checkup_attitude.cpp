@@ -2,7 +2,7 @@
 #include <gtest/gtest.h>
 
 //romea
-#include "romea_localisation_imu/CheckupAttitude.hpp"
+#include "romea_core_localisation_imu/CheckupAttitude.hpp"
 
 class TestAttitudeDiagnostic : public ::testing::Test
 {

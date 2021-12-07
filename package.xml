@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="3">
-  <name>romea_localisation_imu</name>
+  <name>romea_core_localisation_imu</name>
   <version>0.0.0</version>
-  <description>The romea localisation library </description>
+  <description>The romea  core localisation imu library </description>
   <author email="jean.laneurit@inrae.fr">Jean Laneurit</author>
   <maintainer email="jean.laneurit@inrae.fr">Jean Laneurit</maintainer>
   <license>TODO</license>
@@ -11,6 +11,6 @@
   <export>
     <build_type>cmake</build_type>
   </export>
-  <depend>romea_imu</depend>
-  <depend>romea_localisation</depend>
+  <depend>romea_core_imu</depend>
+  <depend>romea_core_localisation</depend>
 </package>

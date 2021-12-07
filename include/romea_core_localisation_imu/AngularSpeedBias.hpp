@@ -2,10 +2,10 @@
 #define _romea_AngularSpeedBias_hpp_
 
 //romea
-#include <romea_imu/algorithms/ZeroVelocityEstimator.hpp>
-#include <romea_imu/AccelerationsFrame.hpp>
-#include <romea_imu/AngularSpeedsFrame.hpp>
-#include <romea_common/diagnostic/DiagnosticReport.hpp>
+#include <romea_core_imu/algorithms/ZeroVelocityEstimator.hpp>
+#include <romea_core_imu/AccelerationsFrame.hpp>
+#include <romea_core_imu/AngularSpeedsFrame.hpp>
+#include <romea_core_common/diagnostic/DiagnosticReport.hpp>
 
 namespace romea {
 

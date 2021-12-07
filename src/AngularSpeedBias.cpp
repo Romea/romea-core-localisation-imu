@@ -1,4 +1,4 @@
-#include "romea_localisation_imu/AngularSpeedBias.hpp"
+#include "romea_core_localisation_imu/AngularSpeedBias.hpp"
 
 namespace
 {

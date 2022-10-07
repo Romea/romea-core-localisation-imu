@@ -1,4 +1,5 @@
 #include "romea_core_localisation_imu/CheckupAttitude.hpp"
+#include <iostream>
 
 namespace
 {
@@ -10,15 +11,22 @@ namespace romea {
 CheckupAttitude::CheckupAttitude():
   report_()
 {
-  report_.diagnostics.push_back(Diagnostic());
+}
+
+//-----------------------------------------------------------------------------
+void CheckupAttitude::declareReportInfos_()
+{
+  setReportInfo(report_,"roll","");
+  setReportInfo(report_,"pitch","");
 }
 
 //-----------------------------------------------------------------------------
 DiagnosticStatus CheckupAttitude::evaluate(const RollPitchCourseFrame & frame)
 {
+  std::lock_guard<std::mutex> lock(mutex_);
   if(checkAttitudeAngles_(frame))
   {
-     setDiagnostic_(DiagnosticStatus::OK,"Attitude is OK.");
+    setDiagnostic_(DiagnosticStatus::OK,"Attitude is OK.");
   }
   else
   {
@@ -34,9 +42,8 @@ DiagnosticStatus CheckupAttitude::evaluate(const RollPitchCourseFrame & frame)
 void CheckupAttitude::setDiagnostic_(const DiagnosticStatus & status,
                                      const std::string & message)
 {
-  Diagnostic & diagnostic = report_.diagnostics.front();
-  diagnostic.message = message;
-  diagnostic.status = status;
+  report_.diagnostics.clear();
+  report_.diagnostics.push_back({status,message});
 }
 
 //-----------------------------------------------------------------------------
@@ -56,8 +63,17 @@ void CheckupAttitude::setReportInfos_(const RollPitchCourseFrame & frame)
 }
 
 //-----------------------------------------------------------------------------
-const DiagnosticReport & CheckupAttitude::getReport()const
+void CheckupAttitude::reset()
 {
+  std::lock_guard<std::mutex> lock(mutex_);
+  report_.diagnostics.clear();
+  declareReportInfos_();
+}
+
+//-----------------------------------------------------------------------------
+DiagnosticReport CheckupAttitude::getReport()const
+{
+  std::lock_guard<std::mutex> lock(mutex_);
   return report_;
 }
 

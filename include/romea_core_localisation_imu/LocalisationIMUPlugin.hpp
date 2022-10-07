@@ -26,8 +26,10 @@ public :
 
   void enableDebugLog(const std::string & logFilename);
 
+  void processLinearSpeed(const Duration & stamp,
+                          const double & linearSpeed);
+
   bool computeAngularSpeed(const Duration & stamp,
-                           const double & linearSpeed,
                            const double & accelerationAlongXAxis,
                            const double & accelerationAlongYAxis,
                            const double & accelerationAlongZAxis,
@@ -42,19 +44,26 @@ public :
                        const double & courseAngle,
                        ObservationAttitude & attitude);
 
-  DiagnosticReport makeDiagnosticReport()const;
+  DiagnosticReport makeDiagnosticReport(const Duration & stamp);
+
+private :
+
+  void checkHeartBeats_(const Duration & stamp);
+
+  DiagnosticReport makeDiagnosticReport_();
 
 private:
 
   std::unique_ptr<IMUAHRS> imu_;
+  AngularSpeedBias imuAngularSpeedBias_;
+  std::atomic<double> linearSpeed_;
 
-  double angularSpeedBias_;
-  AngularSpeedBias angularSpeedBiasEstimator_;
-
-  CheckupRate inertialMeasurementRateDiagnostic_;
   CheckupRate attitudeRateDiagnostic_;
-  CheckupInertialMeasurements inertialMeasurementDiagnostic_;
+  CheckupRate linearSpeedRateDiagnostic_;
+  CheckupRate inertialMeasurementRateDiagnostic_;
+
   CheckupAttitude attitudeDiagnostic_;
+  CheckupInertialMeasurements inertialMeasurementDiagnostic_;
 
   SimpleFileLogger debugLogger_;
 };

@@ -3,8 +3,10 @@
 namespace
 {
 const double ANGULAR_SPEED_BIAS_EPSILON=0.0001;
-const double LINEAR_SPEED_EPSILON=0.001;
+const double LINEAR_SPEED_EPSILON=0.02;
 }
+
+#include <iostream>
 
 namespace romea {
 
@@ -12,78 +14,113 @@ namespace romea {
 AngularSpeedBias::AngularSpeedBias(const double &imuRate,
                                    const double & accelerationSpeedStd,
                                    const double & angularSpeedStd):
-  is_stopped_(false),
   zeroVelocity_(imuRate,accelerationSpeedStd,angularSpeedStd),
-  imu_angular_speed_bias_(ANGULAR_SPEED_BIAS_EPSILON,5*imuRate),
+  imuAngularSpeedBiasEstimator_(ANGULAR_SPEED_BIAS_EPSILON,5*imuRate),
+  mutex_(),
   report_()
-{
-  report_.diagnostics.push_back(Diagnostic());
+{  
+  setReportInfo(report_,"acceleration_std","");
+  setReportInfo(report_,"angular_speed_std","");
+  setReportInfo(report_,"linear_speed","");
+  setReportInfo(report_,"angular_speed_bias","");
 }
 
 //-----------------------------------------------------------------------------
-bool AngularSpeedBias::isStopped_(const double &linearSpeed,
-                                  const AccelerationsFrame & accelerations,
-                                  const AngularSpeedsFrame & angularSpeeds)
+bool AngularSpeedBias::hasNullLinearSpeed_(const double & linearSpeed)const
 {
-  is_stopped_=zeroVelocity_.update(accelerations.accelerationAlongXAxis,
-                                   accelerations.accelerationAlongYAxis,
-                                   accelerations.accelerationAlongZAxis,
-                                   angularSpeeds.angularSpeedAroundXAxis,
-                                   angularSpeeds.angularSpeedAroundYAxis,
-                                   angularSpeeds.angularSpeedAroundZAxis) &&
-      std::abs(linearSpeed) < LINEAR_SPEED_EPSILON;
+  return std::isfinite(linearSpeed) && std::abs(linearSpeed) < LINEAR_SPEED_EPSILON;
+}
 
-  setReportInfo(report_,"is_stopped",is_stopped_);
+//-----------------------------------------------------------------------------
+bool AngularSpeedBias::hasZeroVelocity_(const AccelerationsFrame & accelerations,
+                                        const AngularSpeedsFrame & angularSpeeds)
+{
+  return zeroVelocity_.update(accelerations.accelerationAlongXAxis,
+                              accelerations.accelerationAlongYAxis,
+                              accelerations.accelerationAlongZAxis,
+                              angularSpeeds.angularSpeedAroundXAxis,
+                              angularSpeeds.angularSpeedAroundYAxis,
+                              angularSpeeds.angularSpeedAroundZAxis);
+}
+
+
+//-----------------------------------------------------------------------------
+void AngularSpeedBias::updateAngularSpeedBias_(const double & linearSpeed,
+                                               const AccelerationsFrame & accelerations,
+                                               const AngularSpeedsFrame & angularSpeeds)
+{
+  bool hasNullLinearSpeed = hasNullLinearSpeed_(linearSpeed);
+  bool hasZeroVelocity = hasZeroVelocity_(accelerations,angularSpeeds);
+
+  if(hasZeroVelocity && hasNullLinearSpeed)
+  {
+    imuAngularSpeedBiasEstimator_.update(angularSpeeds.angularSpeedAroundZAxis);
+  }
+}
+
+
+//-----------------------------------------------------------------------------
+std::optional<double> AngularSpeedBias::evaluate(const double & linearSpeed,
+                                                 const AccelerationsFrame & accelerations,
+                                                 const AngularSpeedsFrame & angularSpeeds)
+{
+  updateAngularSpeedBias_(linearSpeed,accelerations,angularSpeeds);
+
+  std::lock_guard<std::mutex> lock(mutex_);
   setReportInfo(report_,"acceleration_std",zeroVelocity_.getAccelerationStd());
   setReportInfo(report_,"angular_speed_std",zeroVelocity_.getAngularSpeedStd());
+  setReportInfo(report_,"linear_speed",std::isfinite(linearSpeed) ? std::to_string(linearSpeed) : "");
 
-  return is_stopped_;
-}
-
-
-//-----------------------------------------------------------------------------
-bool AngularSpeedBias::evaluate(const double &linearSpeed,
-                                const AccelerationsFrame & accelerations,
-                                const AngularSpeedsFrame & angularSpeeds,
-                                double & angularSpeedBias)
-{
-
-  if(isStopped_(linearSpeed,accelerations,angularSpeeds))
+  if(imuAngularSpeedBiasEstimator_.isAvailable())
   {
-    imu_angular_speed_bias_.update(angularSpeeds.angularSpeedAroundZAxis);
-  }
-
-  if(imu_angular_speed_bias_.isAvailable())
-  {
-    angularSpeedBias= imu_angular_speed_bias_.getAverage();
+    double angularSpeedBias = imuAngularSpeedBiasEstimator_.getAverage();
     setDiagnostic_(DiagnosticStatus::OK,"Angular speed bias is OK.");
-    setReportInfo(report_,"angular_speed_bias",imu_angular_speed_bias_.getAverage());
-    return true;
+    setReportInfo(report_,"angular_speed_bias",angularSpeedBias);
+    return angularSpeedBias;
   }
   else
   {
     setDiagnostic_(DiagnosticStatus::WARN,"Angular speed bias not available.");
     setReportInfo(report_,"angular_speed_bias","");
-    return false;
+    return std::nullopt;
+  }
+}
+
+//-----------------------------------------------------------------------------
+void AngularSpeedBias::reset(bool resetZeroVelocityEstimator)
+{
+  std::lock_guard<std::mutex> lock(mutex_);
+  report_.diagnostics.clear();
+
+  if(resetZeroVelocityEstimator)
+  {
+    zeroVelocity_.reset();
+    setReportInfo(report_,"acceleration_std","");
+    setReportInfo(report_,"angular_speed_std","");
+  }
+  else
+  {
+    setReportInfo(report_,"linear_speed","");
   }
 
-}
-
-
-//-----------------------------------------------------------------------------
-void AngularSpeedBias::setDiagnostic_(const DiagnosticStatus & status, const std::string & message)
-{
-  Diagnostic & diagnostic = report_.diagnostics.front();
-  diagnostic.message = message;
-  diagnostic.status = status;
+  imuAngularSpeedBiasEstimator_.reset();
+  setReportInfo(report_,"angular_speed_bias","");
 }
 
 //-----------------------------------------------------------------------------
-const DiagnosticReport & AngularSpeedBias::getReport()const
+void AngularSpeedBias::setDiagnostic_(const DiagnosticStatus & status,
+                                      const std::string & message)
 {
+  report_.diagnostics.clear();
+  report_.diagnostics.push_back({status,message});
+}
+
+//-----------------------------------------------------------------------------
+DiagnosticReport AngularSpeedBias::getReport()const
+{
+  std::lock_guard<std::mutex> lock(mutex_);
   return report_;
 }
-
 
 }
 

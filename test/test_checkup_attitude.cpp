@@ -18,6 +18,22 @@ public:
   romea::CheckupAttitude diagnostic;
 };
 
+////-----------------------------------------------------------------------------
+//TEST_F(TestAttitudeDiagnostic, checkStaleAfterInstantiation)
+//{
+//  EXPECT_EQ(diagnostic.getReport().diagnostics.empty(),TRUE);
+//  EXPECT_EQ(diagnostic.getReport().info.empty(),TRUE);
+//}
+
+////-----------------------------------------------------------------------------
+//TEST_F(TestAttitudeDiagnostic, checkStaleAfterReset)
+//{
+//  diagnostic.evaluate(frame);
+//  diagnostic.reset();
+//  EXPECT_EQ(diagnostic.getReport().diagnostics.empty(),TRUE);
+//  EXPECT_EQ(diagnostic.getReport().info.empty(),TRUE);
+//}
+
 //-----------------------------------------------------------------------------
 TEST_F(TestAttitudeDiagnostic, withGoodFrame)
 {

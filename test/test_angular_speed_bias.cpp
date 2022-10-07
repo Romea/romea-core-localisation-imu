@@ -44,7 +44,7 @@ public:
   {
     angularSpeeds.angularSpeedAroundXAxis=angularSpeedDistribution(generator);
     angularSpeeds.angularSpeedAroundYAxis=angularSpeedDistribution(generator);
-    angularSpeeds.angularSpeedAroundZAxis=angularSpeedDistribution(generator)+9.81;
+    angularSpeeds.angularSpeedAroundZAxis=angularSpeedDistribution(generator);
   }
 
   void check(const romea::DiagnosticStatus & finalStatus,
@@ -54,11 +54,12 @@ public:
     {
       makeAccelerationFrame();
       makeAngularSpeedFrame();
-      EXPECT_FALSE(angularSpeedBiasEstimator.evaluate(linearSpeed,
-                                                      accelerations,
-                                                      angularSpeeds,
-                                                      angularSpeedBias));
 
+      auto angularSpeedBias=angularSpeedBiasEstimator.evaluate(linearSpeed,
+                                                               accelerations,
+                                                               angularSpeeds);
+
+      EXPECT_FALSE(angularSpeedBias.has_value());
       EXPECT_EQ(angularSpeedBiasEstimator.getReport().diagnostics.front().status,romea::DiagnosticStatus::WARN);
       EXPECT_STREQ(angularSpeedBiasEstimator.getReport().diagnostics.front().message.c_str(),"Angular speed bias not available.");
     }
@@ -66,11 +67,11 @@ public:
     makeAccelerationFrame();
     makeAngularSpeedFrame();
 
-    EXPECT_EQ(angularSpeedBiasEstimator.evaluate(linearSpeed,
-                                                 accelerations,
-                                                 angularSpeeds,
-                                                 angularSpeedBias),boolean(finalStatus));
+    auto angularSpeedBias=angularSpeedBiasEstimator.evaluate(linearSpeed,
+                                                             accelerations,
+                                                             angularSpeeds);
 
+    EXPECT_EQ(angularSpeedBias.has_value(),boolean(finalStatus));
     EXPECT_EQ(angularSpeedBiasEstimator.getReport().diagnostics.front().status,finalStatus);
     EXPECT_STREQ(angularSpeedBiasEstimator.getReport().diagnostics.front().message.c_str(),finalMessage.c_str());
   }
@@ -99,6 +100,7 @@ TEST_F(TestAngularSpeedBias, testAllOk)
   accelerationDistribution= std::normal_distribution<double>(0.,accelerationStd);
   angularSpeedDistribution= std::normal_distribution<double>(0.,angularSpeedStd);
   check(romea::DiagnosticStatus::OK,"Angular speed bias is OK.");
+  report = angularSpeedBiasEstimator.getReport();
 }
 
 //-----------------------------------------------------------------------------
@@ -126,6 +128,19 @@ TEST_F(TestAngularSpeedBias, testLinearSpeedUpperToZero)
   accelerationDistribution= std::normal_distribution<double>(0.,accelerationStd);
   angularSpeedDistribution= std::normal_distribution<double>(0.,angularSpeedStd);
   check(romea::DiagnosticStatus::WARN,"Angular speed bias not available.");
+}
+
+//-----------------------------------------------------------------------------
+TEST_F(TestAngularSpeedBias, testResetAfterAllOK)
+{
+  linearSpeed=0;
+  accelerationDistribution= std::normal_distribution<double>(0.,accelerationStd);
+  angularSpeedDistribution= std::normal_distribution<double>(0.,angularSpeedStd);
+  check(romea::DiagnosticStatus::OK,"Angular speed bias is OK.");
+
+  angularSpeedBiasEstimator.reset(false);
+  auto report = angularSpeedBiasEstimator.getReport();
+  EXPECT_EQ(report.diagnostics.front().status,romea::DiagnosticStatus::STALE);
 }
 
 //-----------------------------------------------------------------------------

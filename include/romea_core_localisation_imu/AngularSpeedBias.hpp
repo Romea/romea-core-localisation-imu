@@ -7,6 +7,10 @@
 #include <romea_core_imu/AngularSpeedsFrame.hpp>
 #include <romea_core_common/diagnostic/DiagnosticReport.hpp>
 
+//std
+#include <optional>
+#include <mutex>
+
 namespace romea {
 
 class AngularSpeedBias
@@ -18,28 +22,33 @@ public:
                    const double & accelerationSpeedStd,
                    const double & angularSpeedStd);
 
-  bool evaluate(const double &linearSpeed,
-                const AccelerationsFrame & accelerations,
-                const AngularSpeedsFrame & angularSpeeds,
-                double & angularSpeedBias);
+  std::optional<double> evaluate(const double & linearSpeed,
+                                 const AccelerationsFrame & accelerations,
+                                 const AngularSpeedsFrame & angularSpeeds);
 
-  const DiagnosticReport & getReport()const;
+  DiagnosticReport getReport()const;
 
-private :
-
-  bool isStopped_(const double &linearSpeed,
-                  const AccelerationsFrame &accelerations,
-                  const AngularSpeedsFrame &angularSpeeds);
-
-  void setDiagnostic_(const DiagnosticStatus & status,
-                      const std::string & message);
+  void reset(bool resetZeroVelocityEstimator);
 
 private :
 
-  bool is_stopped_;
+  bool hasNullLinearSpeed_(const double & linearSpeed)const;
+
+  bool hasZeroVelocity_(const AccelerationsFrame & accelerations,
+                        const AngularSpeedsFrame & angularSpeeds);
+
+  void updateAngularSpeedBias_(const double & linearSpeed,
+                               const AccelerationsFrame & accelerations,
+                               const AngularSpeedsFrame & angularSpeeds);
+
+  void setDiagnostic_(const DiagnosticStatus & status,const std::string & message);
+
+private :
+
   ZeroVelocityEstimator zeroVelocity_;
-  romea::OnlineAverage imu_angular_speed_bias_;
+  romea::OnlineAverage imuAngularSpeedBiasEstimator_;
 
+  mutable std::mutex mutex_;
   DiagnosticReport report_;
 };
 

@@ -12,12 +12,25 @@ CheckupInertialMeasurements::CheckupInertialMeasurements(const double &accelerat
   angularSpeedRange_(angularSpeedRange),
   report_()
 {
+  declareReportInfos_();
+}
+
+//-----------------------------------------------------------------------------
+void CheckupInertialMeasurements::declareReportInfos_()
+{
+  setReportInfo(report_,"acceleration_x","");
+  setReportInfo(report_,"acceleration_y","");
+  setReportInfo(report_,"acceleration_z","");
+  setReportInfo(report_,"angular_speed_x","");
+  setReportInfo(report_,"angular_speed_y","");
+  setReportInfo(report_,"angular_speed_z","");
 }
 
 //-----------------------------------------------------------------------------
 DiagnosticStatus CheckupInertialMeasurements::evaluate(const AccelerationsFrame & accelerations,
                                                        const AngularSpeedsFrame & angularSpeeds)
 {
+  std::lock_guard<std::mutex> lock(mutex_);
   report_.diagnostics.clear();
   checkAccelerations_(accelerations);
   checkAngularSpeeds_(angularSpeeds);
@@ -30,8 +43,8 @@ DiagnosticStatus CheckupInertialMeasurements::evaluate(const AccelerationsFrame 
 void CheckupInertialMeasurements::checkAccelerations_(const AccelerationsFrame & accelerationFrame)
 {
   if(std::abs(accelerationFrame.accelerationAlongXAxis)>accelerationRange_||
-      std::abs(accelerationFrame.accelerationAlongYAxis)>accelerationRange_ ||
-      std::abs(accelerationFrame.accelerationAlongZAxis)>accelerationRange_)
+     std::abs(accelerationFrame.accelerationAlongYAxis)>accelerationRange_ ||
+     std::abs(accelerationFrame.accelerationAlongZAxis)>accelerationRange_)
   {
     addDiagnostic_(DiagnosticStatus::ERROR,"Acceleration data is out of range.");
   }
@@ -45,8 +58,8 @@ void CheckupInertialMeasurements::checkAccelerations_(const AccelerationsFrame &
 void CheckupInertialMeasurements::checkAngularSpeeds_(const AngularSpeedsFrame & angularSpeedFrame)
 {
   if(std::abs(angularSpeedFrame.angularSpeedAroundXAxis)>angularSpeedRange_||
-      std::abs(angularSpeedFrame.angularSpeedAroundYAxis)>angularSpeedRange_ ||
-      std::abs(angularSpeedFrame.angularSpeedAroundZAxis)>angularSpeedRange_)
+     std::abs(angularSpeedFrame.angularSpeedAroundYAxis)>angularSpeedRange_ ||
+     std::abs(angularSpeedFrame.angularSpeedAroundZAxis)>angularSpeedRange_)
   {
     addDiagnostic_(DiagnosticStatus::ERROR,"Angular speed data is out of range.");
   }
@@ -58,11 +71,11 @@ void CheckupInertialMeasurements::checkAngularSpeeds_(const AngularSpeedsFrame &
 
 
 //-----------------------------------------------------------------------------
-const DiagnosticReport & CheckupInertialMeasurements::getReport() const
+romea::DiagnosticReport CheckupInertialMeasurements::getReport() const
 {
+  std::lock_guard<std::mutex> lock(mutex_);
   return report_;
 }
-
 
 //-----------------------------------------------------------------------------
 void CheckupInertialMeasurements::setReportInfos_(const AccelerationsFrame & accelarations)
@@ -89,5 +102,13 @@ void CheckupInertialMeasurements::addDiagnostic_(const DiagnosticStatus & status
   diagnostic.status = status;
   report_.diagnostics.push_back(diagnostic);
 }
+
+//-----------------------------------------------------------------------------
+void CheckupInertialMeasurements::reset()
+{
+  report_.diagnostics.clear();
+  declareReportInfos_();
+}
+
 
 }

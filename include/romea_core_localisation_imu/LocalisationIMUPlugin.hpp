@@ -58,9 +58,9 @@ private:
   AngularSpeedBias imuAngularSpeedBias_;
   std::atomic<double> linearSpeed_;
 
-  CheckupRate attitudeRateDiagnostic_;
-  CheckupRate linearSpeedRateDiagnostic_;
-  CheckupRate inertialMeasurementRateDiagnostic_;
+  CheckupGreaterThanRate attitudeRateDiagnostic_;
+  CheckupGreaterThanRate linearSpeedRateDiagnostic_;
+  CheckupGreaterThanRate inertialMeasurementRateDiagnostic_;
 
   CheckupAttitude attitudeDiagnostic_;
   CheckupInertialMeasurements inertialMeasurementDiagnostic_;

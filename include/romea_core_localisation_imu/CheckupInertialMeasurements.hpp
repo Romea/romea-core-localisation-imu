@@ -1,13 +1,15 @@
-#ifndef _romea_CheckupInertialMeasurements_hpp_
-#define _romea_CheckupInertialMeasurements_hpp_
+#ifndef ROMEA_CORE_LOCALISATION_IMU_CHECKUPINERTIALMEASUREMENTS_HPP_
+#define ROMEA_CORE_LOCALISATION_IMU_CHECKUPINERTIALMEASUREMENTS_HPP_
 
-//romea
+// std
+#include <mutex>
+#include <string>
+
+// romea
 #include <romea_core_imu/AccelerationsFrame.hpp>
 #include <romea_core_imu/AngularSpeedsFrame.hpp>
 #include <romea_core_common/diagnostic/DiagnosticReport.hpp>
 
-//std
-#include <mutex>
 
 namespace romea
 {
@@ -34,7 +36,7 @@ private :
   void declareReportInfos_();
   void setReportInfos_(const AccelerationsFrame & accelarations);
   void setReportInfos_(const AngularSpeedsFrame & angularSpeeds);
-  void addDiagnostic_(const DiagnosticStatus & status,const std::string & message);
+  void addDiagnostic_(const DiagnosticStatus & status, const std::string & message);
 
 private :
 
@@ -45,6 +47,6 @@ private :
   DiagnosticReport report_;
 };
 
-}
+}  // namespace romea
 
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_IMU_CHECKUPINERTIALMEASUREMENTS_HPP_

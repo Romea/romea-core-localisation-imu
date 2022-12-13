@@ -1,20 +1,19 @@
-#ifndef _romea_CheckupAttitude_hpp_
-#define _romea_CheckupAttitude_hpp_
+#ifndef ROMEA_CORE_LOCALISATION_IMU_CHECKUPATTITUDE_HPP_
+#define ROMEA_CORE_LOCALISATION_IMU_CHECKUPATTITUDE_HPP_
 
-//romea
+// std
+#include <mutex>
+#include <string>
+
+// romea
 #include <romea_core_common/diagnostic/DiagnosticReport.hpp>
 #include <romea_core_imu/RollPitchCourseFrame.hpp>
-
-//std
-#include <mutex>
 
 namespace romea {
 
 class  CheckupAttitude
 {
-
 public:
-
   CheckupAttitude();
 
   DiagnosticStatus evaluate(const RollPitchCourseFrame & frame);
@@ -37,9 +36,6 @@ private :
   DiagnosticReport report_;
 };
 
+}  // namespace romea
 
-
-}// namespace
-
-
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_IMU_CHECKUPATTITUDE_HPP_

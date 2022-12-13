@@ -1,23 +1,23 @@
-#ifndef _romea_AngularSpeedBias_hpp_
-#define _romea_AngularSpeedBias_hpp_
+#ifndef ROMEA_CORE_LOCALISATION_IMU_ANGULARSPEEDBIAS_HPP_
+#define ROMEA_CORE_LOCALISATION_IMU_ANGULARSPEEDBIAS_HPP_
 
-//romea
+// std
+#include <optional>
+#include <string>
+#include <mutex>
+
+// romea
 #include <romea_core_imu/algorithms/ZeroVelocityEstimator.hpp>
 #include <romea_core_imu/AccelerationsFrame.hpp>
 #include <romea_core_imu/AngularSpeedsFrame.hpp>
 #include <romea_core_common/diagnostic/DiagnosticReport.hpp>
 
-//std
-#include <optional>
-#include <mutex>
 
 namespace romea {
 
 class AngularSpeedBias
 {
-
 public:
-
   AngularSpeedBias(const double &imuRate,
                    const double & accelerationSpeedStd,
                    const double & angularSpeedStd);
@@ -41,7 +41,7 @@ private :
                                const AccelerationsFrame & accelerations,
                                const AngularSpeedsFrame & angularSpeeds);
 
-  void setDiagnostic_(const DiagnosticStatus & status,const std::string & message);
+  void setDiagnostic_(const DiagnosticStatus & status, const std::string & message);
 
 private :
 
@@ -52,8 +52,6 @@ private :
   DiagnosticReport report_;
 };
 
+}  // namespace romea
 
-}// namespace
-
-
-#endif
+#endif  // ROMEA_CORE_LOCALISATION_IMU_ANGULARSPEEDBIAS_HPP_

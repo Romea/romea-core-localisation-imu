@@ -23,9 +23,9 @@ LocalisationIMUPlugin::LocalisationIMUPlugin(std::unique_ptr<IMUAHRS> imu):
   inertialMeasurementRateDiagnostic_("inertial_measurements",
                                      imu_->getRate(),
                                      imu_->getRate()*0.1),
+  attitudeDiagnostic_(),
   inertialMeasurementDiagnostic_(imu_->getAccelerationRange(),
                                  imu_->getAngularSpeedRange()),
-  attitudeDiagnostic_(),
   debugLogger_()
 {
 

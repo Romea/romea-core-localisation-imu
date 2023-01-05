@@ -1,3 +1,6 @@
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
 // gtest
 #include <gtest/gtest.h>
 
@@ -7,8 +10,8 @@
 class TestAttitudeDiagnostic : public ::testing::Test
 {
 public:
-  TestAttitudeDiagnostic():
-    frame(),
+  TestAttitudeDiagnostic()
+  : frame(),
     diagnostic()
   {
   }
@@ -18,14 +21,14 @@ public:
 };
 
 ////-----------------------------------------------------------------------------
-//TEST_F(TestAttitudeDiagnostic, checkStaleAfterInstantiation)
+// TEST_F(TestAttitudeDiagnostic, checkStaleAfterInstantiation)
 //{
 //  EXPECT_EQ(diagnostic.getReport().diagnostics.empty(),TRUE);
 //  EXPECT_EQ(diagnostic.getReport().info.empty(),TRUE);
 //}
 
 ////-----------------------------------------------------------------------------
-//TEST_F(TestAttitudeDiagnostic, checkStaleAfterReset)
+// TEST_F(TestAttitudeDiagnostic, checkStaleAfterReset)
 //{
 //  diagnostic.evaluate(frame);
 //  diagnostic.reset();
@@ -52,8 +55,9 @@ TEST_F(TestAttitudeDiagnostic, withUnavailableRollAngle)
   frame.pitchAngle = -0.156;
   EXPECT_EQ(diagnostic.evaluate(frame), romea::DiagnosticStatus::ERROR);
   EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::DiagnosticStatus::ERROR);
-  EXPECT_STREQ(diagnostic.getReport().diagnostics.front().message.c_str(),
-               "Attitude angles are out of range.");
+  EXPECT_STREQ(
+    diagnostic.getReport().diagnostics.front().message.c_str(),
+    "Attitude angles are out of range.");
   EXPECT_STREQ(diagnostic.getReport().info.at("roll").c_str(), "1.7453");
   EXPECT_STREQ(diagnostic.getReport().info.at("pitch").c_str(), "-0.156");
 }
@@ -65,14 +69,16 @@ TEST_F(TestAttitudeDiagnostic, withUnavailablePitchAngle)
   frame.pitchAngle = -1.903;
   EXPECT_EQ(diagnostic.evaluate(frame), romea::DiagnosticStatus::ERROR);
   EXPECT_EQ(diagnostic.getReport().diagnostics.front().status, romea::DiagnosticStatus::ERROR);
-  EXPECT_STREQ(diagnostic.getReport().diagnostics.front().message.c_str(),
-               "Attitude angles are out of range.");
+  EXPECT_STREQ(
+    diagnostic.getReport().diagnostics.front().message.c_str(),
+    "Attitude angles are out of range.");
   EXPECT_STREQ(diagnostic.getReport().info.at("roll").c_str(), "0.05");
   EXPECT_STREQ(diagnostic.getReport().info.at("pitch").c_str(), "-1.903");
 }
 
 //-----------------------------------------------------------------------------
-int main(int argc, char **argv){
+int main(int argc, char ** argv)
+{
   ::testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
 }

@@ -1,14 +1,20 @@
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
+
+// std
+#include <string>
+
+// local
 #include "romea_core_localisation_imu/CheckupInertialMeasurements.hpp"
-#include <iostream>
 
 namespace romea
 {
 
-
 //-----------------------------------------------------------------------------
-CheckupInertialMeasurements::CheckupInertialMeasurements(const double &accelerationRange,
-                                                         const double & angularSpeedRange):
-  accelerationRange_(accelerationRange),
+CheckupInertialMeasurements::CheckupInertialMeasurements(
+  const double & accelerationRange,
+  const double & angularSpeedRange)
+: accelerationRange_(accelerationRange),
   angularSpeedRange_(angularSpeedRange),
   report_()
 {
@@ -18,17 +24,18 @@ CheckupInertialMeasurements::CheckupInertialMeasurements(const double &accelerat
 //-----------------------------------------------------------------------------
 void CheckupInertialMeasurements::declareReportInfos_()
 {
-  setReportInfo(report_,"acceleration_x","");
-  setReportInfo(report_,"acceleration_y","");
-  setReportInfo(report_,"acceleration_z","");
-  setReportInfo(report_,"angular_speed_x","");
-  setReportInfo(report_,"angular_speed_y","");
-  setReportInfo(report_,"angular_speed_z","");
+  setReportInfo(report_, "acceleration_x", "");
+  setReportInfo(report_, "acceleration_y", "");
+  setReportInfo(report_, "acceleration_z", "");
+  setReportInfo(report_, "angular_speed_x", "");
+  setReportInfo(report_, "angular_speed_y", "");
+  setReportInfo(report_, "angular_speed_z", "");
 }
 
 //-----------------------------------------------------------------------------
-DiagnosticStatus CheckupInertialMeasurements::evaluate(const AccelerationsFrame & accelerations,
-                                                       const AngularSpeedsFrame & angularSpeeds)
+DiagnosticStatus CheckupInertialMeasurements::evaluate(
+  const AccelerationsFrame & accelerations,
+  const AngularSpeedsFrame & angularSpeeds)
 {
   std::lock_guard<std::mutex> lock(mutex_);
   report_.diagnostics.clear();
@@ -42,30 +49,26 @@ DiagnosticStatus CheckupInertialMeasurements::evaluate(const AccelerationsFrame 
 //--------------------------------------------------------------------
 void CheckupInertialMeasurements::checkAccelerations_(const AccelerationsFrame & accelerationFrame)
 {
-  if(std::abs(accelerationFrame.accelerationAlongXAxis)>accelerationRange_||
-     std::abs(accelerationFrame.accelerationAlongYAxis)>accelerationRange_ ||
-     std::abs(accelerationFrame.accelerationAlongZAxis)>accelerationRange_)
+  if (std::abs(accelerationFrame.accelerationAlongXAxis) > accelerationRange_ ||
+    std::abs(accelerationFrame.accelerationAlongYAxis) > accelerationRange_ ||
+    std::abs(accelerationFrame.accelerationAlongZAxis) > accelerationRange_)
   {
-    addDiagnostic_(DiagnosticStatus::ERROR,"Acceleration data is out of range.");
-  }
-  else
-  {
-    addDiagnostic_(DiagnosticStatus::OK,"Acceleration data is OK.");
+    addDiagnostic_(DiagnosticStatus::ERROR, "Acceleration data is out of range.");
+  } else {
+    addDiagnostic_(DiagnosticStatus::OK, "Acceleration data is OK.");
   }
 }
 
 //--------------------------------------------------------------------
 void CheckupInertialMeasurements::checkAngularSpeeds_(const AngularSpeedsFrame & angularSpeedFrame)
 {
-  if(std::abs(angularSpeedFrame.angularSpeedAroundXAxis)>angularSpeedRange_||
-     std::abs(angularSpeedFrame.angularSpeedAroundYAxis)>angularSpeedRange_ ||
-     std::abs(angularSpeedFrame.angularSpeedAroundZAxis)>angularSpeedRange_)
+  if (std::abs(angularSpeedFrame.angularSpeedAroundXAxis) > angularSpeedRange_ ||
+    std::abs(angularSpeedFrame.angularSpeedAroundYAxis) > angularSpeedRange_ ||
+    std::abs(angularSpeedFrame.angularSpeedAroundZAxis) > angularSpeedRange_)
   {
-    addDiagnostic_(DiagnosticStatus::ERROR,"Angular speed data is out of range.");
-  }
-  else
-  {
-    addDiagnostic_(DiagnosticStatus::OK,"Angular speed data is OK.");
+    addDiagnostic_(DiagnosticStatus::ERROR, "Angular speed data is out of range.");
+  } else {
+    addDiagnostic_(DiagnosticStatus::OK, "Angular speed data is OK.");
   }
 }
 
@@ -80,22 +83,23 @@ romea::DiagnosticReport CheckupInertialMeasurements::getReport() const
 //-----------------------------------------------------------------------------
 void CheckupInertialMeasurements::setReportInfos_(const AccelerationsFrame & accelarations)
 {
-  setReportInfo(report_,"acceleration_x",accelarations.accelerationAlongXAxis);
-  setReportInfo(report_,"acceleration_y",accelarations.accelerationAlongYAxis);
-  setReportInfo(report_,"acceleration_z",accelarations.accelerationAlongZAxis);
+  setReportInfo(report_, "acceleration_x", accelarations.accelerationAlongXAxis);
+  setReportInfo(report_, "acceleration_y", accelarations.accelerationAlongYAxis);
+  setReportInfo(report_, "acceleration_z", accelarations.accelerationAlongZAxis);
 }
 
 //-----------------------------------------------------------------------------
 void CheckupInertialMeasurements::setReportInfos_(const AngularSpeedsFrame & angularSpeeds)
 {
-  setReportInfo(report_,"angular_speed_x",angularSpeeds.angularSpeedAroundXAxis);
-  setReportInfo(report_,"angular_speed_y",angularSpeeds.angularSpeedAroundYAxis);
-  setReportInfo(report_,"angular_speed_z",angularSpeeds.angularSpeedAroundZAxis);
+  setReportInfo(report_, "angular_speed_x", angularSpeeds.angularSpeedAroundXAxis);
+  setReportInfo(report_, "angular_speed_y", angularSpeeds.angularSpeedAroundYAxis);
+  setReportInfo(report_, "angular_speed_z", angularSpeeds.angularSpeedAroundZAxis);
 }
 
 //-----------------------------------------------------------------------------
-void CheckupInertialMeasurements::addDiagnostic_(const DiagnosticStatus & status,
-                                                 const std::string & message)
+void CheckupInertialMeasurements::addDiagnostic_(
+  const DiagnosticStatus & status,
+  const std::string & message)
 {
   Diagnostic diagnostic;
   diagnostic.message = message;
@@ -110,5 +114,4 @@ void CheckupInertialMeasurements::reset()
   declareReportInfos_();
 }
 
-
-}
+}  // namespace romea

@@ -1,16 +1,19 @@
-#ifndef ROMEA_CORE_LOCALISATION_IMU_ANGULARSPEEDBIAS_HPP_
-#define ROMEA_CORE_LOCALISATION_IMU_ANGULARSPEEDBIAS_HPP_
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
 
-// std
-#include <optional>
-#include <string>
-#include <mutex>
+#ifndef ROMEA_CORE_LOCALISATION_IMU__ANGULARSPEEDBIAS_HPP_
+#define ROMEA_CORE_LOCALISATION_IMU__ANGULARSPEEDBIAS_HPP_
 
 // romea
 #include <romea_core_imu/algorithms/ZeroVelocityEstimator.hpp>
 #include <romea_core_imu/AccelerationsFrame.hpp>
 #include <romea_core_imu/AngularSpeedsFrame.hpp>
 #include <romea_core_common/diagnostic/DiagnosticReport.hpp>
+
+// std
+#include <optional>
+#include <string>
+#include <mutex>
 
 
 namespace romea {

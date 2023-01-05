@@ -1,35 +1,35 @@
-#ifndef ROMEA_CORE_LOCALISATION_IMU_CHECKUPINERTIALMEASUREMENTS_HPP_
-#define ROMEA_CORE_LOCALISATION_IMU_CHECKUPINERTIALMEASUREMENTS_HPP_
+#ifndef ROMEA_CORE_LOCALISATION_IMU__CHECKUPINERTIALMEASUREMENTS_HPP_
+#define ROMEA_CORE_LOCALISATION_IMU__CHECKUPINERTIALMEASUREMENTS_HPP_
 
-// std
-#include <mutex>
-#include <string>
 
 // romea
 #include <romea_core_imu/AccelerationsFrame.hpp>
 #include <romea_core_imu/AngularSpeedsFrame.hpp>
 #include <romea_core_common/diagnostic/DiagnosticReport.hpp>
 
+// std
+#include <mutex>
+#include <string>
 
 namespace romea
 {
 
 class CheckupInertialMeasurements
 {
-public :
+public:
+  CheckupInertialMeasurements(
+    const double & accelerationRange,
+    const double & angularSpeedRange);
 
-  CheckupInertialMeasurements(const double & accelerationRange,
-                              const double & angularSpeedRange);
-
-  DiagnosticStatus evaluate(const AccelerationsFrame & accelerations,
-                            const AngularSpeedsFrame & angularSpeeds);
+  DiagnosticStatus evaluate(
+    const AccelerationsFrame & accelerations,
+    const AngularSpeedsFrame & angularSpeeds);
 
   DiagnosticReport getReport() const;
 
   void reset();
 
-private :
-
+private:
   void checkAccelerations_(const AccelerationsFrame & accelerationFrame);
   void checkAngularSpeeds_(const AngularSpeedsFrame & angularSpeedFrame);
 
@@ -38,8 +38,7 @@ private :
   void setReportInfos_(const AngularSpeedsFrame & angularSpeeds);
   void addDiagnostic_(const DiagnosticStatus & status, const std::string & message);
 
-private :
-
+private:
   double accelerationRange_;
   double angularSpeedRange_;
 
@@ -49,4 +48,4 @@ private :
 
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_IMU_CHECKUPINERTIALMEASUREMENTS_HPP_
+#endif  // ROMEA_CORE_LOCALISATION_IMU__CHECKUPINERTIALMEASUREMENTS_HPP_

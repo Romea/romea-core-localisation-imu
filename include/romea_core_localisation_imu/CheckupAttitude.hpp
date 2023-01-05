@@ -1,17 +1,22 @@
-#ifndef ROMEA_CORE_LOCALISATION_IMU_CHECKUPATTITUDE_HPP_
-#define ROMEA_CORE_LOCALISATION_IMU_CHECKUPATTITUDE_HPP_
+// Copyright 2022 INRAE, French National Research Institute for Agriculture, Food and Environment
+// Add license
 
-// std
-#include <mutex>
-#include <string>
+#ifndef ROMEA_CORE_LOCALISATION_IMU__CHECKUPATTITUDE_HPP_
+#define ROMEA_CORE_LOCALISATION_IMU__CHECKUPATTITUDE_HPP_
 
 // romea
 #include <romea_core_common/diagnostic/DiagnosticReport.hpp>
 #include <romea_core_imu/RollPitchCourseFrame.hpp>
 
-namespace romea {
+// std
+#include <mutex>
+#include <string>
 
-class  CheckupAttitude
+
+namespace romea
+{
+
+class CheckupAttitude
 {
 public:
   CheckupAttitude();
@@ -22,20 +27,18 @@ public:
 
   void reset();
 
-private :
-
+private:
   bool checkAttitudeAngles_(const RollPitchCourseFrame & frame);
 
   void declareReportInfos_();
   void setReportInfos_(const RollPitchCourseFrame & frame);
   void setDiagnostic_(const DiagnosticStatus & status, const std::string & message);
 
-private :
-
+private:
   mutable std::mutex mutex_;
   DiagnosticReport report_;
 };
 
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_IMU_CHECKUPATTITUDE_HPP_
+#endif  // ROMEA_CORE_LOCALISATION_IMU__CHECKUPATTITUDE_HPP_

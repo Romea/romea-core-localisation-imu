@@ -4,7 +4,7 @@ repositories:
         url: git@gitlab-ssh.irstea.fr:romea_core/romea_common.git
     romea_core/romea_imu:
         type: git
-        url: git@gitlab-ssh.irstea.fr:romea_core/romea_gps.git
+        url: git@gitlab-ssh.irstea.fr:romea_core/romea_imu.git
     romea_core/romea_filtering:
         type: git
         url: git@gitlab-ssh.irstea.fr:romea_core/romea_filtering.git

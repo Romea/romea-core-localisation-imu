@@ -5,7 +5,7 @@
   <description>The romea core localisation imu library </description>
   <author email="jean.laneurit@inrae.fr">Jean Laneurit</author>
   <maintainer email="jean.laneurit@inrae.fr">Jean Laneurit</maintainer>
-  <license>APACHE 2.0</license>
+  <license>Apache License 2.0</license>
   <buildtool_depend condition="$ROS_VERSION == 1">catkin</buildtool_depend>
   <buildtool_depend condition="$ROS_VERSION == 2">ament_cmake</buildtool_depend>
   <export>

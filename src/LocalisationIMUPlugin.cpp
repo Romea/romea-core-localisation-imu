@@ -41,7 +41,7 @@ LocalisationIMUPlugin::LocalisationIMUPlugin(std::unique_ptr<IMUAHRS> imu)
   attitudeRateDiagnostic_("attitude",
     imu_->getRate(),
     imu_->getRate() * 0.1),
-  linearSpeedRateDiagnostic_("linear_speed", 10.0, 0.1),
+  linearSpeedRateDiagnostic_("linear_speed", 10.0, 1.),
   inertialMeasurementRateDiagnostic_("inertial_measurements",
     imu_->getRate(),
     imu_->getRate() * 0.1),

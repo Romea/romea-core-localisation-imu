@@ -30,6 +30,8 @@ const double LINEAR_SPEED_EPSILON = 0.001;
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 LocalisationIMUPlugin::LocalisationIMUPlugin(std::unique_ptr<IMUAHRS> imu)
@@ -79,14 +81,14 @@ bool LocalisationIMUPlugin::computeAngularSpeed(
   const double & angularSpeedAroundZAxis,
   ObservationAngularSpeed & angularSpeed)
 {
-  romea::AccelerationsFrame accelerations =
+  AccelerationsFrame accelerations =
     imu_->createAccelerationsFrame(
     accelerationAlongXAxis,
     accelerationAlongYAxis,
     accelerationAlongZAxis);
 
 
-  romea::AngularSpeedsFrame angularSpeeds =
+  AngularSpeedsFrame angularSpeeds =
     imu_->createAngularSpeedsFrame(
     angularSpeedAroundXAxis,
     angularSpeedAroundYAxis,
@@ -171,4 +173,5 @@ DiagnosticReport LocalisationIMUPlugin::makeDiagnosticReport_()
   return report;
 }
 
+}  // namespace core
 }  // namespace romea

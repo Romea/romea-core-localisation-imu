@@ -13,6 +13,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 class CheckupInertialMeasurements
 {
@@ -46,6 +48,7 @@ private:
   DiagnosticReport report_;
 };
 
+}  // namespace core
 }  // namespace romea
 
 #endif  // ROMEA_CORE_LOCALISATION_IMU__CHECKUPINERTIALMEASUREMENTS_HPP_

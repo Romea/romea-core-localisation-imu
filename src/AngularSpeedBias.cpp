@@ -27,6 +27,8 @@ const double LINEAR_SPEED_EPSILON = 0.02;
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 AngularSpeedBias::AngularSpeedBias(
@@ -141,4 +143,5 @@ DiagnosticReport AngularSpeedBias::getReport()const
   return report_;
 }
 
+}  // namespace core
 }  // namespace romea

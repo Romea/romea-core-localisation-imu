@@ -13,8 +13,8 @@
 // limitations under the License.
 
 
-#ifndef ROMEA_CORE_LOCALISATION_IMU__LOCALISATIONIMUPLUGIN_HPP_ 
-#define ROMEA_CORE_LOCALISATION_IMU__LOCALISATIONIMUPLUGIN_HPP_ 
+#ifndef ROMEA_CORE_LOCALISATION_IMU__LOCALISATIONIMUPLUGIN_HPP_
+#define ROMEA_CORE_LOCALISATION_IMU__LOCALISATIONIMUPLUGIN_HPP_
 
 
 // romea
@@ -35,7 +35,8 @@
 
 namespace romea
 {
-
+namespace core
+{
 
 class LocalisationIMUPlugin
 {
@@ -87,6 +88,7 @@ private:
   SimpleFileLogger debugLogger_;
 };
 
+}  // namespace core
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_IMU__LOCALISATIONIMUPLUGIN_HPP_ 
+#endif  // ROMEA_CORE_LOCALISATION_IMU__LOCALISATIONIMUPLUGIN_HPP_

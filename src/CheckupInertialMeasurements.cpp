@@ -21,6 +21,8 @@
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 CheckupInertialMeasurements::CheckupInertialMeasurements(
@@ -86,7 +88,7 @@ void CheckupInertialMeasurements::checkAngularSpeeds_(const AngularSpeedsFrame &
 
 
 //-----------------------------------------------------------------------------
-romea::DiagnosticReport CheckupInertialMeasurements::getReport() const
+DiagnosticReport CheckupInertialMeasurements::getReport() const
 {
   std::lock_guard<std::mutex> lock(mutex_);
   return report_;
@@ -126,4 +128,5 @@ void CheckupInertialMeasurements::reset()
   declareReportInfos_();
 }
 
+}  // namespace core
 }  // namespace romea

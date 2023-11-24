@@ -25,6 +25,8 @@ namespace
 
 namespace romea
 {
+namespace core
+{
 
 //-----------------------------------------------------------------------------
 CheckupAttitude::CheckupAttitude()
@@ -94,4 +96,5 @@ DiagnosticReport CheckupAttitude::getReport()const
   return report_;
 }
 
+}  // namespace core
 }  // namespace romea

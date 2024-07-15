@@ -131,7 +131,7 @@ public:
 
       EXPECT_EQ(
         report.diagnostics.size(),
-        6 + int(finalAngularBiasStatus != romea::DiagnosticStatus::STALE));
+        6 + static_cast<int>(finalAngularBiasStatus != romea::DiagnosticStatus::STALE));
       EXPECT_EQ(
         diagnostic(0).status, std::isfinite(linearSpeed) ?
         romea::DiagnosticStatus::OK : romea::DiagnosticStatus::ERROR);
@@ -149,7 +149,7 @@ public:
     step(88, finalAttitudeStatus, finalAngularBiasStatus);
     EXPECT_EQ(
       report.diagnostics.size(),
-      6 + int(finalAngularBiasStatus != romea::DiagnosticStatus::STALE));
+      6 + static_cast<int>(finalAngularBiasStatus != romea::DiagnosticStatus::STALE));
     EXPECT_EQ(
       diagnostic(0).status, std::isfinite(linearSpeed) ?
       romea::DiagnosticStatus::OK : romea::DiagnosticStatus::ERROR);

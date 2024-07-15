@@ -75,4 +75,4 @@ private:
 }  // namespace core
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_IMU_ANGULARSPEEDBIAS_HPP_
+#endif  // ROMEA_CORE_LOCALISATION_IMU__ANGULARSPEEDBIAS_HPP_

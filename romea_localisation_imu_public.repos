@@ -1,0 +1,16 @@
+repositories:
+    romea_core/romea_common:
+        type: git
+        url: https://github.com/Romea/romea-core-common.git
+    romea_core/romea_imu:
+        type: git
+        url: https://github.com/Romea/romea-core-imu.git
+    romea_core/romea_filtering:
+        type: git
+        url: https://github.com/Romea/romea-core-filtering.git
+    romea_core/romea_localisation:
+        type: git
+        url: https://github.com/Romea/romea-core-localisation.git
+    romea_core/romea_localisation_imu:
+        type: git
+        url: https://github.com/Romea/romea-core-localisation-imu.git

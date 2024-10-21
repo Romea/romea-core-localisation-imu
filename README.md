@@ -1,6 +1,6 @@
-## Romea Core Localisation IMU Library
+# romea_core_localisation_imu #
 
-This library provides a plugin that transforms data from an Inertial Measurement Unit (IMU) into Gaussian observations (heading, angular speeds), enabling seamless integration with the localization algorithms in the **romea_core_localisation** library. Additionally, it includes monitoring tools to track IMU data and generate diagnostic reports, helping to detect and troubleshoot potential issues in real-time.
+This rpoject is C++ library that provides a plugin that transforms data from an Inertial Measurement Unit (IMU) into Gaussian observations (heading, angular speeds), enabling seamless integration with the localization algorithms in the **romea_core_localisation** library. Additionally, it includes monitoring tools to track IMU data and generate diagnostic reports, helping to detect and troubleshoot potential issues in real-time.
 
 ## **Usage**
 
@@ -33,7 +33,7 @@ This project is released under the Apache License 2.0. See the LICENSE file for 
 
 ## **Authors**
 
-The Romea Core Localization IMU library, written by **Jean Laneurit**, was developed during ANR Baudet Rob 2 project. Several individuals contributed scientifically to the development of this library:
+The romea_core_localisation_imu library, written by **Jean Laneurit**, was developed during ANR Baudet Rob 2 project. Several individuals contributed scientifically to the development of this library:
 
 **Jean Laneurit**  
 **Christophe Debain**  
@@ -42,4 +42,4 @@ The Romea Core Localization IMU library, written by **Jean Laneurit**, was devel
 
 ## **Contact**
 
-If you have any questions or comments about Romea Core Localisation IMU library, please contact **[Jean Laneurit](mailto:jean.laneurit@inrae.fr)**.
+If you have any questions or comments about romea_core_localisation_imu library, please contact **[Jean Laneurit](mailto:jean.laneurit@inrae.fr)**.

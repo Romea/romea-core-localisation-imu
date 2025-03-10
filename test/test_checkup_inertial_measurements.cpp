@@ -32,15 +32,15 @@ public:
   {
   }
 
-  romea::AccelerationsFrame accelerations;
-  romea::AngularSpeedsFrame angularSpeeds;
-  romea::CheckupInertialMeasurements diagnostic;
+  romea::core::AccelerationsFrame accelerations;
+  romea::core::AngularSpeedsFrame angularSpeeds;
+  romea::core::CheckupInertialMeasurements diagnostic;
 };
 
 //-----------------------------------------------------------------------------
 TEST_F(TestInertialMeasurementsDiagnostic, checkGoodFrames)
 {
-  EXPECT_EQ(diagnostic.evaluate(accelerations, angularSpeeds), romea::DiagnosticStatus::OK);
+  EXPECT_EQ(diagnostic.evaluate(accelerations, angularSpeeds), romea::core::DiagnosticStatus::OK);
   EXPECT_STREQ(
     diagnostic.getReport().diagnostics.front().message.c_str(),
     "Acceleration data is OK.");
@@ -59,7 +59,7 @@ TEST_F(TestInertialMeasurementsDiagnostic, checkGoodFrames)
 TEST_F(TestInertialMeasurementsDiagnostic, checkAccelerationFrameOutOfRange)
 {
   accelerations.accelerationAlongZAxis = 11;
-  EXPECT_EQ(diagnostic.evaluate(accelerations, angularSpeeds), romea::DiagnosticStatus::ERROR);
+  EXPECT_EQ(diagnostic.evaluate(accelerations, angularSpeeds), romea::core::DiagnosticStatus::ERROR);
   EXPECT_STREQ(
     diagnostic.getReport().diagnostics.front().message.c_str(),
     "Acceleration data is out of range.");
@@ -69,7 +69,7 @@ TEST_F(TestInertialMeasurementsDiagnostic, checkAccelerationFrameOutOfRange)
 TEST_F(TestInertialMeasurementsDiagnostic, checkAngularSpeedFrameOutOfRange)
 {
   angularSpeeds.angularSpeedAroundZAxis = 2 * 360 / 180. * M_PI;
-  EXPECT_EQ(diagnostic.evaluate(accelerations, angularSpeeds), romea::DiagnosticStatus::ERROR);
+  EXPECT_EQ(diagnostic.evaluate(accelerations, angularSpeeds), romea::core::DiagnosticStatus::ERROR);
   EXPECT_STREQ(
     diagnostic.getReport().diagnostics.back().message.c_str(),
     "Angular speed data is out of range.");

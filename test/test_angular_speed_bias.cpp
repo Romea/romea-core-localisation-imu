@@ -23,9 +23,9 @@
 // romea
 #include "romea_core_localisation_imu/AngularSpeedBias.hpp"
 
-bool boolean(const romea::DiagnosticStatus & status)
+bool boolean(const romea::core::DiagnosticStatus & status)
 {
-  return status == romea::DiagnosticStatus::OK;
+  return status == romea::core::DiagnosticStatus::OK;
 }
 
 
@@ -62,7 +62,7 @@ public:
   }
 
   void check(
-    const romea::DiagnosticStatus & finalStatus,
+    const romea::core::DiagnosticStatus & finalStatus,
     const std::string & finalMessage)
   {
     for (size_t n = 0; n < (5 + 2) * rate - 2; ++n) {
@@ -77,7 +77,7 @@ public:
       EXPECT_FALSE(angularSpeedBias.has_value());
       EXPECT_EQ(
         angularSpeedBiasEstimator.getReport().diagnostics.front().status,
-        romea::DiagnosticStatus::WARN);
+        romea::core::DiagnosticStatus::WARN);
       EXPECT_STREQ(
         angularSpeedBiasEstimator.getReport().diagnostics.front().message.c_str(),
         "Angular speed bias not available.");
@@ -103,16 +103,16 @@ public:
   double accelerationStd;
   double angularSpeedStd;
   double angularSpeedBias;
-  romea::AngularSpeedBias angularSpeedBiasEstimator;
-  romea::AccelerationsFrame accelerations;
-  romea::AngularSpeedsFrame angularSpeeds;
+  romea::core::AngularSpeedBias angularSpeedBiasEstimator;
+  romea::core::AccelerationsFrame accelerations;
+  romea::core::AngularSpeedsFrame angularSpeeds;
   double linearSpeed;
 
   std::default_random_engine generator;
   std::normal_distribution<double> accelerationDistribution;
   std::normal_distribution<double> angularSpeedDistribution;
 
-  romea::DiagnosticReport report;
+  romea::core::DiagnosticReport report;
 };
 
 //-----------------------------------------------------------------------------
@@ -121,7 +121,7 @@ TEST_F(TestAngularSpeedBias, testAllOk)
   linearSpeed = 0;
   accelerationDistribution = std::normal_distribution<double>(0., accelerationStd);
   angularSpeedDistribution = std::normal_distribution<double>(0., angularSpeedStd);
-  check(romea::DiagnosticStatus::OK, "Angular speed bias is OK.");
+  check(romea::core::DiagnosticStatus::OK, "Angular speed bias is OK.");
   report = angularSpeedBiasEstimator.getReport();
 }
 
@@ -131,7 +131,7 @@ TEST_F(TestAngularSpeedBias, testWrongAccelerationStd)
   linearSpeed = 0;
   accelerationDistribution = std::normal_distribution<double>(0., 5 * accelerationStd);
   angularSpeedDistribution = std::normal_distribution<double>(0., angularSpeedStd);
-  check(romea::DiagnosticStatus::WARN, "Angular speed bias not available.");
+  check(romea::core::DiagnosticStatus::WARN, "Angular speed bias not available.");
 }
 
 //-----------------------------------------------------------------------------
@@ -140,7 +140,7 @@ TEST_F(TestAngularSpeedBias, testWrongAngularSpeedStd)
   linearSpeed = 0;
   accelerationDistribution = std::normal_distribution<double>(0., accelerationStd);
   angularSpeedDistribution = std::normal_distribution<double>(0., 5 * angularSpeedStd);
-  check(romea::DiagnosticStatus::WARN, "Angular speed bias not available.");
+  check(romea::core::DiagnosticStatus::WARN, "Angular speed bias not available.");
 }
 
 //-----------------------------------------------------------------------------
@@ -149,7 +149,7 @@ TEST_F(TestAngularSpeedBias, testLinearSpeedUpperToZero)
   linearSpeed = 1.0;
   accelerationDistribution = std::normal_distribution<double>(0., accelerationStd);
   angularSpeedDistribution = std::normal_distribution<double>(0., angularSpeedStd);
-  check(romea::DiagnosticStatus::WARN, "Angular speed bias not available.");
+  check(romea::core::DiagnosticStatus::WARN, "Angular speed bias not available.");
 }
 
 //-----------------------------------------------------------------------------
@@ -158,11 +158,11 @@ TEST_F(TestAngularSpeedBias, testResetAfterAllOK)
   linearSpeed = 0;
   accelerationDistribution = std::normal_distribution<double>(0., accelerationStd);
   angularSpeedDistribution = std::normal_distribution<double>(0., angularSpeedStd);
-  check(romea::DiagnosticStatus::OK, "Angular speed bias is OK.");
+  check(romea::core::DiagnosticStatus::OK, "Angular speed bias is OK.");
 
   angularSpeedBiasEstimator.reset(false);
   auto report = angularSpeedBiasEstimator.getReport();
-  EXPECT_EQ(report.diagnostics.front().status, romea::DiagnosticStatus::STALE);
+  EXPECT_EQ(report.diagnostics.front().status, romea::core::DiagnosticStatus::STALE);
 }
 
 //-----------------------------------------------------------------------------

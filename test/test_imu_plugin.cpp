@@ -24,9 +24,9 @@
 // romea
 #include "romea_core_localisation_imu/LocalisationIMUPlugin.hpp"
 
-bool boolean(const romea::DiagnosticStatus & status)
+bool boolean(const romea::core::DiagnosticStatus & status)
 {
-  return status == romea::DiagnosticStatus::OK;
+  return status == romea::core::DiagnosticStatus::OK;
 }
 
 class TestIMUPlugin : public ::testing::Test
@@ -55,33 +55,33 @@ public:
 
   void SetUp() override
   {
-    auto imu = std::make_unique<romea::IMUAHRS>(
+    auto imu = std::make_unique<romea::core::IMUAHRS>(
       10,
       0.0005, 0.02, 10.,
       3.4907e-04 / 180. * M_PI, 3.4907e-02 / 180. * M_PI, 300. / 180. * M_PI,
       7.e-09, 1.e-08, 0.000075,
       0.01745);
 
-    plugin = std::make_unique<romea::LocalisationIMUPlugin>(std::move(imu));
+    plugin = std::make_unique<romea::core::LocalisationIMUPlugin>(std::move(imu));
   }
 
-  const romea::Diagnostic & diagnostic(const size_t & index)
+  const romea::core::Diagnostic & diagnostic(const size_t & index)
   {
     return *std::next(std::cbegin(report.diagnostics), index);
   }
 
   void step(
     const size_t & n,
-    const romea::DiagnosticStatus & attitudeStatus,
-    const romea::DiagnosticStatus & angularBiasStatus)
+    const romea::core::DiagnosticStatus & attitudeStatus,
+    const romea::core::DiagnosticStatus & angularBiasStatus)
   {
     //    std::cout << " step n "<< n<< std::endl;
     if (std::isfinite(linearSpeed)) {
-      romea::Duration sstamp = romea::durationFromSecond(n / 10.);
+      romea::core::Duration sstamp = romea::core::durationFromSecond(n / 10.);
       plugin->processLinearSpeed(sstamp, linearSpeed);
     }
 
-    romea::Duration stamp = romea::durationFromSecond(0.1 + n / 10.);
+    romea::core::Duration stamp = romea::core::durationFromSecond(0.1 + n / 10.);
 
     EXPECT_EQ(
       plugin->computeAngularSpeed(
@@ -112,54 +112,54 @@ public:
   }
 
   void check(
-    const romea::DiagnosticStatus & finalLinearSpeedStatus,
-    const romea::DiagnosticStatus & finalAccelerationStatus,
-    const romea::DiagnosticStatus & finalAngularSpeedStatus,
-    const romea::DiagnosticStatus & finalAttitudeStatus,
-    const romea::DiagnosticStatus & finalAngularBiasStatus)
+    const romea::core::DiagnosticStatus & finalLinearSpeedStatus,
+    const romea::core::DiagnosticStatus & finalAccelerationStatus,
+    const romea::core::DiagnosticStatus & finalAngularSpeedStatus,
+    const romea::core::DiagnosticStatus & finalAttitudeStatus,
+    const romea::core::DiagnosticStatus & finalAngularBiasStatus)
   {
     for (size_t n = 0; n < 20; ++n) {
-      step(n, romea::DiagnosticStatus::ERROR, romea::DiagnosticStatus::ERROR);
+      step(n, romea::core::DiagnosticStatus::ERROR, romea::core::DiagnosticStatus::ERROR);
       EXPECT_EQ(report.diagnostics.size(), 3);
-      EXPECT_EQ(diagnostic(0).status, romea::DiagnosticStatus::ERROR);
-      EXPECT_EQ(diagnostic(1).status, romea::DiagnosticStatus::ERROR);
-      EXPECT_EQ(diagnostic(2).status, romea::DiagnosticStatus::ERROR);
+      EXPECT_EQ(diagnostic(0).status, romea::core::DiagnosticStatus::ERROR);
+      EXPECT_EQ(diagnostic(1).status, romea::core::DiagnosticStatus::ERROR);
+      EXPECT_EQ(diagnostic(2).status, romea::core::DiagnosticStatus::ERROR);
     }
 
     for (size_t n = 20; n < 88; ++n) {
-      step(n, finalAttitudeStatus, romea::DiagnosticStatus::ERROR);
+      step(n, finalAttitudeStatus, romea::core::DiagnosticStatus::ERROR);
 
       EXPECT_EQ(
         report.diagnostics.size(),
-        6 + static_cast<int>(finalAngularBiasStatus != romea::DiagnosticStatus::STALE));
+        6 + static_cast<int>(finalAngularBiasStatus != romea::core::DiagnosticStatus::STALE));
       EXPECT_EQ(
         diagnostic(0).status, std::isfinite(linearSpeed) ?
-        romea::DiagnosticStatus::OK : romea::DiagnosticStatus::ERROR);
-      EXPECT_EQ(diagnostic(1).status, romea::DiagnosticStatus::OK);  // atttiude rate
+        romea::core::DiagnosticStatus::OK : romea::core::DiagnosticStatus::ERROR);
+      EXPECT_EQ(diagnostic(1).status, romea::core::DiagnosticStatus::OK);  // atttiude rate
       EXPECT_EQ(diagnostic(2).status, finalAttitudeStatus);  // atttiude
-      EXPECT_EQ(diagnostic(3).status, romea::DiagnosticStatus::OK);  // inertial rate
+      EXPECT_EQ(diagnostic(3).status, romea::core::DiagnosticStatus::OK);  // inertial rate
       EXPECT_EQ(diagnostic(4).status, finalAccelerationStatus);  // acceleration
       EXPECT_EQ(diagnostic(5).status, finalAngularSpeedStatus);  // angular speeds
 
-      if (finalAngularBiasStatus != romea::DiagnosticStatus::STALE) {
-        EXPECT_EQ(diagnostic(6).status, romea::DiagnosticStatus::WARN);  // angular speed_bias
+      if (finalAngularBiasStatus != romea::core::DiagnosticStatus::STALE) {
+        EXPECT_EQ(diagnostic(6).status, romea::core::DiagnosticStatus::WARN);  // angular speed_bias
       }
     }
 
     step(88, finalAttitudeStatus, finalAngularBiasStatus);
     EXPECT_EQ(
       report.diagnostics.size(),
-      6 + static_cast<int>(finalAngularBiasStatus != romea::DiagnosticStatus::STALE));
+      6 + static_cast<int>(finalAngularBiasStatus != romea::core::DiagnosticStatus::STALE));
     EXPECT_EQ(
       diagnostic(0).status, std::isfinite(linearSpeed) ?
-      romea::DiagnosticStatus::OK : romea::DiagnosticStatus::ERROR);
-    EXPECT_EQ(diagnostic(1).status, romea::DiagnosticStatus::OK);  // atttiude rate
+      romea::core::DiagnosticStatus::OK : romea::core::DiagnosticStatus::ERROR);
+    EXPECT_EQ(diagnostic(1).status, romea::core::DiagnosticStatus::OK);  // atttiude rate
     EXPECT_EQ(diagnostic(2).status, finalAttitudeStatus);  // atttiude
-    EXPECT_EQ(diagnostic(3).status, romea::DiagnosticStatus::OK);  // inertial rate
+    EXPECT_EQ(diagnostic(3).status, romea::core::DiagnosticStatus::OK);  // inertial rate
     EXPECT_EQ(diagnostic(4).status, finalAccelerationStatus);  // acceleration
     EXPECT_EQ(diagnostic(5).status, finalAngularSpeedStatus);  // angular speeds
 
-    if (finalAngularBiasStatus != romea::DiagnosticStatus::STALE) {
+    if (finalAngularBiasStatus != romea::core::DiagnosticStatus::STALE) {
       EXPECT_EQ(diagnostic(6).status, finalAngularBiasStatus);  // angular speed_bias
     }
   }
@@ -173,11 +173,11 @@ public:
   std::normal_distribution<double> angularSpeedDistribution;
   double linearSpeed;
 
-  romea::ObservationAngularSpeed angularSpeedObs;
-  romea::ObservationAttitude attitudeObs;
-  std::unique_ptr<romea::LocalisationIMUPlugin> plugin;
+  romea::core::ObservationAngularSpeed angularSpeedObs;
+  romea::core::ObservationAttitude attitudeObs;
+  std::unique_ptr<romea::core::LocalisationIMUPlugin> plugin;
 
-  romea::DiagnosticReport report;
+  romea::core::DiagnosticReport report;
 };
 
 
@@ -185,11 +185,11 @@ public:
 TEST_F(TestIMUPlugin, testAllOk)
 {
   check(
-    romea::DiagnosticStatus::OK,     // finalLinearSpeedStatus
-    romea::DiagnosticStatus::OK,    // finalAccelerationStatus
-    romea::DiagnosticStatus::OK,    // finalAngularSpeedStatus
-    romea::DiagnosticStatus::OK,    // finalAttitudeStatus
-    romea::DiagnosticStatus::OK);    // finalAngularBiasStatus
+    romea::core::DiagnosticStatus::OK,     // finalLinearSpeedStatus
+    romea::core::DiagnosticStatus::OK,    // finalAccelerationStatus
+    romea::core::DiagnosticStatus::OK,    // finalAngularSpeedStatus
+    romea::core::DiagnosticStatus::OK,    // finalAttitudeStatus
+    romea::core::DiagnosticStatus::OK);    // finalAngularBiasStatus
 }
 
 //-----------------------------------------------------------------------------
@@ -197,11 +197,11 @@ TEST_F(TestIMUPlugin, testAttitudeOutOfRange)
 {
   attitudeX = M_PI;
   check(
-    romea::DiagnosticStatus::OK,     // finalLinearSpeedStatus
-    romea::DiagnosticStatus::OK,    // finalAccelerationStatus
-    romea::DiagnosticStatus::OK,    // finalAngularSpeedStatus
-    romea::DiagnosticStatus::ERROR,    // finalAttitudeStatus
-    romea::DiagnosticStatus::OK);    // finalAngularBiasStatus
+    romea::core::DiagnosticStatus::OK,     // finalLinearSpeedStatus
+    romea::core::DiagnosticStatus::OK,    // finalAccelerationStatus
+    romea::core::DiagnosticStatus::OK,    // finalAngularSpeedStatus
+    romea::core::DiagnosticStatus::ERROR,    // finalAttitudeStatus
+    romea::core::DiagnosticStatus::OK);    // finalAngularBiasStatus
 }
 
 //-----------------------------------------------------------------------------
@@ -209,11 +209,11 @@ TEST_F(TestIMUPlugin, testAngularSpeedOutOfRange)
 {
   angularSpeedZ = 2 * M_PI;
   check(
-    romea::DiagnosticStatus::OK,     // finalLinearSpeedStatus
-    romea::DiagnosticStatus::OK,    // finalAccelerationStatus
-    romea::DiagnosticStatus::ERROR,    // finalAngularSpeedStatus
-    romea::DiagnosticStatus::OK,    // finalAttitudeStatus
-    romea::DiagnosticStatus::STALE);    // finalAngularBiasStatus
+    romea::core::DiagnosticStatus::OK,     // finalLinearSpeedStatus
+    romea::core::DiagnosticStatus::OK,    // finalAccelerationStatus
+    romea::core::DiagnosticStatus::ERROR,    // finalAngularSpeedStatus
+    romea::core::DiagnosticStatus::OK,    // finalAttitudeStatus
+    romea::core::DiagnosticStatus::STALE);    // finalAngularBiasStatus
 }
 
 //-----------------------------------------------------------------------------
@@ -221,11 +221,11 @@ TEST_F(TestIMUPlugin, testAccelerationOutOfRange)
 {
   accelerationZ = 20;
   check(
-    romea::DiagnosticStatus::OK,     // finalLinearSpeedStatus
-    romea::DiagnosticStatus::ERROR,    // finalAccelerationStatus
-    romea::DiagnosticStatus::OK,    // finalAngularSpeedStatus
-    romea::DiagnosticStatus::OK,    // finalAttitudeStatus
-    romea::DiagnosticStatus::STALE);    // finalAngularBiasStatus
+    romea::core::DiagnosticStatus::OK,     // finalLinearSpeedStatus
+    romea::core::DiagnosticStatus::ERROR,    // finalAccelerationStatus
+    romea::core::DiagnosticStatus::OK,    // finalAngularSpeedStatus
+    romea::core::DiagnosticStatus::OK,    // finalAttitudeStatus
+    romea::core::DiagnosticStatus::STALE);    // finalAngularBiasStatus
 }
 
 //-----------------------------------------------------------------------------
@@ -233,11 +233,11 @@ TEST_F(TestIMUPlugin, testLinearSpeedNotEqualZero)
 {
   linearSpeed = 1;
   check(
-    romea::DiagnosticStatus::OK,     // finalLinearSpeedStatus
-    romea::DiagnosticStatus::OK,    // finalAccelerationStatus
-    romea::DiagnosticStatus::OK,    // finalAngularSpeedStatus
-    romea::DiagnosticStatus::OK,    // finalAttitudeStatus
-    romea::DiagnosticStatus::WARN);    // finalAngularBiasStatus
+    romea::core::DiagnosticStatus::OK,     // finalLinearSpeedStatus
+    romea::core::DiagnosticStatus::OK,    // finalAccelerationStatus
+    romea::core::DiagnosticStatus::OK,    // finalAngularSpeedStatus
+    romea::core::DiagnosticStatus::OK,    // finalAttitudeStatus
+    romea::core::DiagnosticStatus::WARN);    // finalAngularBiasStatus
 }
 
 //-----------------------------------------------------------------------------
@@ -247,11 +247,11 @@ TEST_F(TestIMUPlugin, testAngularSpeedStdToHigh)
     0, 100 * 3.4907e-04 * std::sqrt(
       10) / 180. * M_PI);
   check(
-    romea::DiagnosticStatus::OK,     // finalLinearSpeedStatus
-    romea::DiagnosticStatus::OK,    // finalAccelerationStatus
-    romea::DiagnosticStatus::OK,    // finalAngularSpeedStatus
-    romea::DiagnosticStatus::OK,    // finalAttitudeStatus
-    romea::DiagnosticStatus::WARN);    // finalAngularBiasStatus
+    romea::core::DiagnosticStatus::OK,     // finalLinearSpeedStatus
+    romea::core::DiagnosticStatus::OK,    // finalAccelerationStatus
+    romea::core::DiagnosticStatus::OK,    // finalAngularSpeedStatus
+    romea::core::DiagnosticStatus::OK,    // finalAttitudeStatus
+    romea::core::DiagnosticStatus::WARN);    // finalAngularBiasStatus
 }
 
 //-----------------------------------------------------------------------------
@@ -259,24 +259,24 @@ TEST_F(TestIMUPlugin, testAccelerationStdToHigh)
 {
   accelerationDistribution = std::normal_distribution<double>(0, 100 * 0.0005 * std::sqrt(10));
   check(
-    romea::DiagnosticStatus::OK,     // finalLinearSpeedStatus
-    romea::DiagnosticStatus::OK,    // finalAccelerationStatus
-    romea::DiagnosticStatus::OK,    // finalAngularSpeedStatus
-    romea::DiagnosticStatus::OK,    // finalAttitudeStatus
-    romea::DiagnosticStatus::WARN);    // finalAngularBiasStatus
+    romea::core::DiagnosticStatus::OK,     // finalLinearSpeedStatus
+    romea::core::DiagnosticStatus::OK,    // finalAccelerationStatus
+    romea::core::DiagnosticStatus::OK,    // finalAngularSpeedStatus
+    romea::core::DiagnosticStatus::OK,    // finalAttitudeStatus
+    romea::core::DiagnosticStatus::WARN);    // finalAngularBiasStatus
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestIMUPlugin, testTimeout)
 {
   check(
-    romea::DiagnosticStatus::OK,     // finalLinearSpeedStatus
-    romea::DiagnosticStatus::OK,    // finalAccelerationStatus
-    romea::DiagnosticStatus::OK,    // finalAngularSpeedStatus
-    romea::DiagnosticStatus::OK,    // finalAttitudeStatus
-    romea::DiagnosticStatus::OK);    // finalAngularBiasStatus
+    romea::core::DiagnosticStatus::OK,     // finalLinearSpeedStatus
+    romea::core::DiagnosticStatus::OK,    // finalAccelerationStatus
+    romea::core::DiagnosticStatus::OK,    // finalAngularSpeedStatus
+    romea::core::DiagnosticStatus::OK,    // finalAttitudeStatus
+    romea::core::DiagnosticStatus::OK);    // finalAngularBiasStatus
 
-  report = plugin->makeDiagnosticReport(romea::durationFromSecond(10.));
+  report = plugin->makeDiagnosticReport(romea::core::durationFromSecond(10.));
 
 //  for(auto diag : report.diagnostics)
 //  {

@@ -17,26 +17,28 @@
 #include <string>
 
 // local
-#include "romea_core_localisation_imu/CheckupInertialMeasurements.hpp"
+#include "romea_core_localisation_imu/checkup_inertial_measurements.hpp"
 
 namespace romea
 {
 namespace core
+{
+namespace localisation
 {
 
 //-----------------------------------------------------------------------------
 CheckupInertialMeasurements::CheckupInertialMeasurements(
   const double & accelerationRange,
   const double & angularSpeedRange)
-: accelerationRange_(accelerationRange),
-  angularSpeedRange_(angularSpeedRange),
+: acceleration_range_(accelerationRange),
+  angular_speed_range_(angularSpeedRange),
   report_()
 {
-  declareReportInfos_();
+  declare_report_infos_();
 }
 
 //-----------------------------------------------------------------------------
-void CheckupInertialMeasurements::declareReportInfos_()
+void CheckupInertialMeasurements::declare_report_infos_()
 {
   setReportInfo(report_, "acceleration_x", "");
   setReportInfo(report_, "acceleration_y", "");
@@ -49,53 +51,55 @@ void CheckupInertialMeasurements::declareReportInfos_()
 //-----------------------------------------------------------------------------
 DiagnosticStatus CheckupInertialMeasurements::evaluate(
   const AccelerationsFrame & accelerations,
-  const AngularSpeedsFrame & angularSpeeds)
+  const AngularSpeedsFrame & angular_speeds)
 {
   std::lock_guard<std::mutex> lock(mutex_);
   report_.diagnostics.clear();
-  checkAccelerations_(accelerations);
-  checkAngularSpeeds_(angularSpeeds);
-  setReportInfos_(accelerations);
-  setReportInfos_(angularSpeeds);
+  check_accelerations_(accelerations);
+  check_angular_speeds_(angular_speeds);
+  set_report_infos_(accelerations);
+  set_report_infos_(angular_speeds);
   return worseStatus(report_.diagnostics);
 }
 
 //--------------------------------------------------------------------
-void CheckupInertialMeasurements::checkAccelerations_(const AccelerationsFrame & accelerationFrame)
+void CheckupInertialMeasurements::check_accelerations_(
+  const AccelerationsFrame & accelerationFrame)
 {
-  if (std::abs(accelerationFrame.accelerationAlongXAxis) > accelerationRange_ ||
-    std::abs(accelerationFrame.accelerationAlongYAxis) > accelerationRange_ ||
-    std::abs(accelerationFrame.accelerationAlongZAxis) > accelerationRange_)
+  if (std::abs(accelerationFrame.accelerationAlongXAxis) > acceleration_range_ ||
+    std::abs(accelerationFrame.accelerationAlongYAxis) > acceleration_range_ ||
+    std::abs(accelerationFrame.accelerationAlongZAxis) > acceleration_range_)
   {
-    addDiagnostic_(DiagnosticStatus::ERROR, "Acceleration data is out of range.");
+    add_diagnostic_(DiagnosticStatus::ERROR, "Acceleration data is out of range.");
   } else {
-    addDiagnostic_(DiagnosticStatus::OK, "Acceleration data is OK.");
+    add_diagnostic_(DiagnosticStatus::OK, "Acceleration data is OK.");
   }
 }
 
 //--------------------------------------------------------------------
-void CheckupInertialMeasurements::checkAngularSpeeds_(const AngularSpeedsFrame & angularSpeedFrame)
+void CheckupInertialMeasurements::check_angular_speeds_(
+  const AngularSpeedsFrame & angularSpeedFrame)
 {
-  if (std::abs(angularSpeedFrame.angularSpeedAroundXAxis) > angularSpeedRange_ ||
-    std::abs(angularSpeedFrame.angularSpeedAroundYAxis) > angularSpeedRange_ ||
-    std::abs(angularSpeedFrame.angularSpeedAroundZAxis) > angularSpeedRange_)
+  if (std::abs(angularSpeedFrame.angularSpeedAroundXAxis) > angular_speed_range_ ||
+    std::abs(angularSpeedFrame.angularSpeedAroundYAxis) > angular_speed_range_ ||
+    std::abs(angularSpeedFrame.angularSpeedAroundZAxis) > angular_speed_range_)
   {
-    addDiagnostic_(DiagnosticStatus::ERROR, "Angular speed data is out of range.");
+    add_diagnostic_(DiagnosticStatus::ERROR, "Angular speed data is out of range.");
   } else {
-    addDiagnostic_(DiagnosticStatus::OK, "Angular speed data is OK.");
+    add_diagnostic_(DiagnosticStatus::OK, "Angular speed data is OK.");
   }
 }
 
 
 //-----------------------------------------------------------------------------
-DiagnosticReport CheckupInertialMeasurements::getReport() const
+DiagnosticReport CheckupInertialMeasurements::get_report() const
 {
   std::lock_guard<std::mutex> lock(mutex_);
   return report_;
 }
 
 //-----------------------------------------------------------------------------
-void CheckupInertialMeasurements::setReportInfos_(const AccelerationsFrame & accelarations)
+void CheckupInertialMeasurements::set_report_infos_(const AccelerationsFrame & accelarations)
 {
   setReportInfo(report_, "acceleration_x", accelarations.accelerationAlongXAxis);
   setReportInfo(report_, "acceleration_y", accelarations.accelerationAlongYAxis);
@@ -103,7 +107,7 @@ void CheckupInertialMeasurements::setReportInfos_(const AccelerationsFrame & acc
 }
 
 //-----------------------------------------------------------------------------
-void CheckupInertialMeasurements::setReportInfos_(const AngularSpeedsFrame & angularSpeeds)
+void CheckupInertialMeasurements::set_report_infos_(const AngularSpeedsFrame & angularSpeeds)
 {
   setReportInfo(report_, "angular_speed_x", angularSpeeds.angularSpeedAroundXAxis);
   setReportInfo(report_, "angular_speed_y", angularSpeeds.angularSpeedAroundYAxis);
@@ -111,7 +115,7 @@ void CheckupInertialMeasurements::setReportInfos_(const AngularSpeedsFrame & ang
 }
 
 //-----------------------------------------------------------------------------
-void CheckupInertialMeasurements::addDiagnostic_(
+void CheckupInertialMeasurements::add_diagnostic_(
   const DiagnosticStatus & status,
   const std::string & message)
 {
@@ -125,8 +129,9 @@ void CheckupInertialMeasurements::addDiagnostic_(
 void CheckupInertialMeasurements::reset()
 {
   report_.diagnostics.clear();
-  declareReportInfos_();
+  declare_report_infos_();
 }
 
+}  // namespace localisation
 }  // namespace core
 }  // namespace romea

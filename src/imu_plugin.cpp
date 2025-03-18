@@ -20,58 +20,59 @@
 #include <string>
 
 // local
-#include "romea_core_localisation_imu/LocalisationIMUPlugin.hpp"
+#include "romea_core_localisation_imu/imu_plugin.hpp"
 
 namespace
 {
 const double LINEAR_SPEED_EPSILON = 0.001;
 }
 
-
 namespace romea
 {
 namespace core
 {
+namespace localisation
+{
 
 //-----------------------------------------------------------------------------
-LocalisationIMUPlugin::LocalisationIMUPlugin(std::unique_ptr<IMUAHRS> imu)
+IMUPlugin::IMUPlugin(std::unique_ptr<IMUAHRS> imu)
 : imu_(std::move(imu)),
-  imuAngularSpeedBias_(imu_->getRate(),
+  imu_angular_speed_bias_(imu_->getRate(),
     imu_->getAccelerationStd(),
     imu_->getAngularSpeedStd()),
-  linearSpeed_(std::numeric_limits<double>::quiet_NaN()),
-  attitudeRateDiagnostic_("attitude",
+  linear_speed_(std::numeric_limits<double>::quiet_NaN()),
+  attitude_rate_diagnostic_("attitude",
     imu_->getRate(),
     imu_->getRate() * 0.1),
-  linearSpeedRateDiagnostic_("linear_speed", 10.0, 1.),
-  inertialMeasurementRateDiagnostic_("inertial_measurements",
+  linear_speed_rate_diagnostic_("linear_speed", 10.0, 1.),
+  inertial_measurement_rate_diagnostic_("inertial_measurements",
     imu_->getRate(),
     imu_->getRate() * 0.1),
-  attitudeDiagnostic_(),
-  inertialMeasurementDiagnostic_(imu_->getAccelerationRange(),
+  attitude_diagnostic_(),
+  inertial_measurement_diagnostic_(imu_->getAccelerationRange(),
     imu_->getAngularSpeedRange()),
-  debugLogger_()
+  debug_logger_()
 {
 }
 
 //-----------------------------------------------------------------------------
-void LocalisationIMUPlugin::enableDebugLog(const std::string & logFilename)
+void IMUPlugin::enable_debug_log(const std::string & logFilename)
 {
-  debugLogger_.init(logFilename);
+  debug_logger_.init(logFilename);
 }
 
 //-----------------------------------------------------------------------------
-void LocalisationIMUPlugin::processLinearSpeed(
+void IMUPlugin::process_linear_speed(
   const Duration & stamp,
   const double & linearSpeed)
 {
-  if (linearSpeedRateDiagnostic_.evaluate(stamp) == DiagnosticStatus::OK) {
-    linearSpeed_.store(linearSpeed);
+  if (linear_speed_rate_diagnostic_.evaluate(stamp) == DiagnosticStatus::OK) {
+    linear_speed_.store(linearSpeed);
   }
 }
 
 //-----------------------------------------------------------------------------
-bool LocalisationIMUPlugin::computeAngularSpeed(
+bool IMUPlugin::compute_angular_speed(
   const Duration & stamp,
   const double & accelerationAlongXAxis,
   const double & accelerationAlongYAxis,
@@ -94,11 +95,11 @@ bool LocalisationIMUPlugin::computeAngularSpeed(
     angularSpeedAroundYAxis,
     angularSpeedAroundZAxis);
 
-  if (inertialMeasurementRateDiagnostic_.evaluate(stamp) == DiagnosticStatus::OK &&
-    inertialMeasurementDiagnostic_.evaluate(accelerations, angularSpeeds) == DiagnosticStatus::OK)
+  if (inertial_measurement_rate_diagnostic_.evaluate(stamp) == DiagnosticStatus::OK &&
+    inertial_measurement_diagnostic_.evaluate(accelerations, angularSpeeds) == DiagnosticStatus::OK)
   {
-    auto angularSpeedBias = imuAngularSpeedBias_.
-      evaluate(linearSpeed_.load(), accelerations, angularSpeeds);
+    auto angularSpeedBias = imu_angular_speed_bias_.
+      evaluate(linear_speed_.load(), accelerations, angularSpeeds);
 
     if (angularSpeedBias.has_value()) {
       angularSpeed.Y() = angularSpeeds.angularSpeedAroundZAxis - angularSpeedBias.value();
@@ -111,7 +112,7 @@ bool LocalisationIMUPlugin::computeAngularSpeed(
 
 
 //-----------------------------------------------------------------------------
-bool LocalisationIMUPlugin::computeAttitude(
+bool IMUPlugin::compute_attitude(
   const Duration & stamp,
   const double & rollAngle,
   const double & pitchAngle,
@@ -123,8 +124,8 @@ bool LocalisationIMUPlugin::computeAttitude(
     pitchAngle,
     courseAngle);
 
-  if (attitudeRateDiagnostic_.evaluate(stamp) == DiagnosticStatus::OK &&
-    attitudeDiagnostic_.evaluate(frame) == DiagnosticStatus::OK)
+  if (attitude_rate_diagnostic_.evaluate(stamp) == DiagnosticStatus::OK &&
+    attitude_diagnostic_.evaluate(frame) == DiagnosticStatus::OK)
   {
     attitude.Y(ObservationAttitude::ROLL) = rollAngle;
     attitude.Y(ObservationAttitude::PITCH) = pitchAngle;
@@ -136,42 +137,43 @@ bool LocalisationIMUPlugin::computeAttitude(
 }
 
 //-----------------------------------------------------------------------------
-DiagnosticReport LocalisationIMUPlugin::makeDiagnosticReport(const Duration & stamp)
+DiagnosticReport IMUPlugin::make_diagnostic_report(const Duration & stamp)
 {
-  checkHeartBeats_(stamp);
-  return makeDiagnosticReport_();
+  check_heart_beats_(stamp);
+  return make_diagnostic_report_();
 }
 
 //-----------------------------------------------------------------------------
-void LocalisationIMUPlugin::checkHeartBeats_(const Duration & stamp)
+void IMUPlugin::check_heart_beats_(const Duration & stamp)
 {
-  if (!attitudeRateDiagnostic_.heartBeatCallback(stamp)) {
-    attitudeDiagnostic_.reset();
+  if (!attitude_rate_diagnostic_.heartBeatCallback(stamp)) {
+    attitude_diagnostic_.reset();
   }
 
-  if (!linearSpeedRateDiagnostic_.heartBeatCallback(stamp)) {
-    linearSpeed_ = std::numeric_limits<double>::quiet_NaN();
-    imuAngularSpeedBias_.reset(false);
+  if (!linear_speed_rate_diagnostic_.heartBeatCallback(stamp)) {
+    linear_speed_ = std::numeric_limits<double>::quiet_NaN();
+    imu_angular_speed_bias_.reset(false);
   }
 
-  if (!inertialMeasurementRateDiagnostic_.heartBeatCallback(stamp)) {
-    inertialMeasurementDiagnostic_.reset();
-    imuAngularSpeedBias_.reset(true);
+  if (!inertial_measurement_rate_diagnostic_.heartBeatCallback(stamp)) {
+    inertial_measurement_diagnostic_.reset();
+    imu_angular_speed_bias_.reset(true);
   }
 }
 
 //-----------------------------------------------------------------------------
-DiagnosticReport LocalisationIMUPlugin::makeDiagnosticReport_()
+DiagnosticReport IMUPlugin::make_diagnostic_report_()
 {
   DiagnosticReport report;
-  report += linearSpeedRateDiagnostic_.getReport();
-  report += attitudeRateDiagnostic_.getReport();
-  report += attitudeDiagnostic_.getReport();
-  report += inertialMeasurementRateDiagnostic_.getReport();
-  report += inertialMeasurementDiagnostic_.getReport();
-  report += imuAngularSpeedBias_.getReport();
+  report += linear_speed_rate_diagnostic_.getReport();
+  report += attitude_rate_diagnostic_.getReport();
+  report += attitude_diagnostic_.get_report();
+  report += inertial_measurement_rate_diagnostic_.getReport();
+  report += inertial_measurement_diagnostic_.get_report();
+  report += imu_angular_speed_bias_.get_report();
   return report;
 }
 
+}  // namespace localisation
 }  // namespace core
 }  // namespace romea

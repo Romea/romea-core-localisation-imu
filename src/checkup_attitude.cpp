@@ -17,15 +17,13 @@
 #include <string>
 
 // local
-#include "romea_core_localisation_imu/CheckupAttitude.hpp"
-
-namespace
-{
-}
+#include "romea_core_localisation_imu/checkup_attitude.hpp"
 
 namespace romea
 {
 namespace core
+{
+namespace localisation
 {
 
 //-----------------------------------------------------------------------------
@@ -35,7 +33,7 @@ CheckupAttitude::CheckupAttitude()
 }
 
 //-----------------------------------------------------------------------------
-void CheckupAttitude::declareReportInfos_()
+void CheckupAttitude::declare_report_infos_()
 {
   setReportInfo(report_, "roll", "");
   setReportInfo(report_, "pitch", "");
@@ -45,19 +43,19 @@ void CheckupAttitude::declareReportInfos_()
 DiagnosticStatus CheckupAttitude::evaluate(const RollPitchCourseFrame & frame)
 {
   std::lock_guard<std::mutex> lock(mutex_);
-  if (checkAttitudeAngles_(frame)) {
-    setDiagnostic_(DiagnosticStatus::OK, "Attitude is OK.");
+  if (check_attitude_angles_(frame)) {
+    set_diagnostic_(DiagnosticStatus::OK, "Attitude is OK.");
   } else {
-    setDiagnostic_(DiagnosticStatus::ERROR, "Attitude angles are out of range.");
+    set_diagnostic_(DiagnosticStatus::ERROR, "Attitude angles are out of range.");
   }
 
-  setReportInfos_(frame);
+  set_report_infos_(frame);
   return report_.diagnostics.front().status;
 }
 
 
 //-----------------------------------------------------------------------------
-void CheckupAttitude::setDiagnostic_(
+void CheckupAttitude::set_diagnostic_(
   const DiagnosticStatus & status,
   const std::string & message)
 {
@@ -66,7 +64,7 @@ void CheckupAttitude::setDiagnostic_(
 }
 
 //-----------------------------------------------------------------------------
-bool CheckupAttitude::checkAttitudeAngles_(const RollPitchCourseFrame & frame)
+bool CheckupAttitude::check_attitude_angles_(const RollPitchCourseFrame & frame)
 {
   return frame.rollAngle >= -M_PI_2 &&
          frame.rollAngle <= M_PI_2 &&
@@ -75,7 +73,7 @@ bool CheckupAttitude::checkAttitudeAngles_(const RollPitchCourseFrame & frame)
 }
 
 //-----------------------------------------------------------------------------
-void CheckupAttitude::setReportInfos_(const RollPitchCourseFrame & frame)
+void CheckupAttitude::set_report_infos_(const RollPitchCourseFrame & frame)
 {
   setReportInfo(report_, "roll", frame.rollAngle);
   setReportInfo(report_, "pitch", frame.pitchAngle);
@@ -86,15 +84,16 @@ void CheckupAttitude::reset()
 {
   std::lock_guard<std::mutex> lock(mutex_);
   report_.diagnostics.clear();
-  declareReportInfos_();
+  declare_report_infos_();
 }
 
 //-----------------------------------------------------------------------------
-DiagnosticReport CheckupAttitude::getReport()const
+DiagnosticReport CheckupAttitude::get_report()const
 {
   std::lock_guard<std::mutex> lock(mutex_);
   return report_;
 }
 
+}  // namespace localisation
 }  // namespace core
 }  // namespace romea

@@ -13,8 +13,8 @@
 // limitations under the License.
 
 
-#ifndef ROMEA_CORE_LOCALISATION_IMU__CHECKUPATTITUDE_HPP_
-#define ROMEA_CORE_LOCALISATION_IMU__CHECKUPATTITUDE_HPP_
+#ifndef ROMEA_CORE_LOCALISATION_IMU__CHECKUP_ATTITUDE_HPP_
+#define ROMEA_CORE_LOCALISATION_IMU__CHECKUP_ATTITUDE_HPP_
 
 // romea
 #include <romea_core_common/diagnostic/DiagnosticReport.hpp>
@@ -29,6 +29,8 @@ namespace romea
 {
 namespace core
 {
+namespace localisation
+{
 
 class CheckupAttitude
 {
@@ -37,23 +39,24 @@ public:
 
   DiagnosticStatus evaluate(const RollPitchCourseFrame & frame);
 
-  DiagnosticReport getReport()const;
+  DiagnosticReport get_report()const;
 
   void reset();
 
 private:
-  bool checkAttitudeAngles_(const RollPitchCourseFrame & frame);
+  bool check_attitude_angles_(const RollPitchCourseFrame & frame);
 
-  void declareReportInfos_();
-  void setReportInfos_(const RollPitchCourseFrame & frame);
-  void setDiagnostic_(const DiagnosticStatus & status, const std::string & message);
+  void declare_report_infos_();
+  void set_report_infos_(const RollPitchCourseFrame & frame);
+  void set_diagnostic_(const DiagnosticStatus & status, const std::string & message);
 
 private:
   mutable std::mutex mutex_;
   DiagnosticReport report_;
 };
 
+}  // namespace localisation
 }  // namespace core
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_IMU__CHECKUPATTITUDE_HPP_
+#endif  // ROMEA_CORE_LOCALISATION_IMU__CHECKUP_ATTITUDE_HPP_

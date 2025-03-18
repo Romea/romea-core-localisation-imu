@@ -13,8 +13,8 @@
 // limitations under the License.
 
 
-#ifndef ROMEA_CORE_LOCALISATION_IMU__ANGULARSPEEDBIAS_HPP_
-#define ROMEA_CORE_LOCALISATION_IMU__ANGULARSPEEDBIAS_HPP_
+#ifndef ROMEA_CORE_LOCALISATION_IMU__ANGULAR_SPEED_BIAS_HPP_
+#define ROMEA_CORE_LOCALISATION_IMU__ANGULAR_SPEED_BIAS_HPP_
 
 // romea
 #include <romea_core_imu/algorithms/ZeroVelocityEstimator.hpp>
@@ -32,47 +32,50 @@ namespace romea
 {
 namespace core
 {
+namespace localisation
+{
 
 class AngularSpeedBias
 {
 public:
   AngularSpeedBias(
-    const double & imuRate,
-    const double & accelerationSpeedStd,
-    const double & angularSpeedStd);
+    const double & imu_rate,
+    const double & acceleration_speed_std,
+    const double & angular_speed_std);
 
   std::optional<double> evaluate(
-    const double & linearSpeed,
+    const double & linear_speed,
     const AccelerationsFrame & accelerations,
     const AngularSpeedsFrame & angularSpeeds);
 
-  DiagnosticReport getReport()const;
+  DiagnosticReport get_report()const;
 
   void reset(bool resetZeroVelocityEstimator);
 
 private:
-  bool hasNullLinearSpeed_(const double & linearSpeed)const;
+  bool has_null_linear_speed_(const double & linearSpeed)const;
 
-  bool hasZeroVelocity_(
+  bool has_zero_velocity_(
     const AccelerationsFrame & accelerations,
     const AngularSpeedsFrame & angularSpeeds);
 
-  void updateAngularSpeedBias_(
+  void update_angular_speed_bias_(
     const double & linearSpeed,
     const AccelerationsFrame & accelerations,
     const AngularSpeedsFrame & angularSpeeds);
 
-  void setDiagnostic_(const DiagnosticStatus & status, const std::string & message);
+  void set_diagnostic_(const DiagnosticStatus & status, const std::string & message);
 
 private:
-  ZeroVelocityEstimator zeroVelocity_;
-  OnlineAverage imuAngularSpeedBiasEstimator_;
+  ZeroVelocityEstimator zero_velocity_;
+  OnlineAverage imu_angular_speed_bias_estimator_;
 
   mutable std::mutex mutex_;
   DiagnosticReport report_;
 };
 
+}  // namespace localisation
 }  // namespace core
 }  // namespace romea
 
-#endif  // ROMEA_CORE_LOCALISATION_IMU__ANGULARSPEEDBIAS_HPP_
+#endif  // ROMEA_CORE_LOCALISATION_IMU__ANGULAR_SPEED_BIAS_HPP_

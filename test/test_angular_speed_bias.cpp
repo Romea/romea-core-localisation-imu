@@ -19,9 +19,10 @@
 // std
 #include <random>
 #include <string>
+#include <iostream>
 
 // romea
-#include "romea_core_localisation_imu/AngularSpeedBias.hpp"
+#include "romea_core_localisation_imu/angular_speed_bias.hpp"
 
 bool boolean(const romea::core::DiagnosticStatus & status)
 {
@@ -70,16 +71,14 @@ public:
       makeAngularSpeedFrame();
 
       auto angularSpeedBias = angularSpeedBiasEstimator.evaluate(
-        linearSpeed,
-        accelerations,
-        angularSpeeds);
+        linearSpeed, accelerations, angularSpeeds);
 
       EXPECT_FALSE(angularSpeedBias.has_value());
       EXPECT_EQ(
         angularSpeedBiasEstimator.getReport().diagnostics.front().status,
         romea::core::DiagnosticStatus::WARN);
       EXPECT_STREQ(
-        angularSpeedBiasEstimator.getReport().diagnostics.front().message.c_str(),
+        angularSpeedBiasEstimator.get_report().diagnostics.front().message.c_str(),
         "Angular speed bias not available.");
     }
 
@@ -87,14 +86,12 @@ public:
     makeAngularSpeedFrame();
 
     auto angularSpeedBias = angularSpeedBiasEstimator.evaluate(
-      linearSpeed,
-      accelerations,
-      angularSpeeds);
+      linearSpeed, accelerations, angularSpeeds);
 
     EXPECT_EQ(angularSpeedBias.has_value(), boolean(finalStatus));
-    EXPECT_EQ(angularSpeedBiasEstimator.getReport().diagnostics.front().status, finalStatus);
+    EXPECT_EQ(angularSpeedBiasEstimator.get_report().diagnostics.front().status, finalStatus);
     EXPECT_STREQ(
-      angularSpeedBiasEstimator.getReport().diagnostics.front().message.c_str(),
+      angularSpeedBiasEstimator.get_report().diagnostics.front().message.c_str(),
       finalMessage.c_str());
   }
 

@@ -12,10 +12,10 @@ find_package(romea_core_imu REQUIRED)
 find_package(romea_core_localisation)
 
 add_library(${PROJECT_NAME} SHARED
-  src/AngularSpeedBias.cpp
-  src/CheckupAttitude.cpp
-  src/CheckupInertialMeasurements.cpp
-  src/LocalisationIMUPlugin.cpp
+  src/angular_speed_bias.cpp
+  src/checkup_attitude.cpp
+  src/checkup_inertial_measurements.cpp
+  src/imu_plugin.cpp
   )
 
 target_include_directories(${PROJECT_NAME} PUBLIC

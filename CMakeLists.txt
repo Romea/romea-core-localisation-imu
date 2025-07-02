@@ -71,6 +71,8 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}
 
 set(CPACK_RESOURCE_FILE_LICENSE "${PROJECT_SOURCE_DIR}/LICENSE")
 
+option(BUILD_TESTING "BUILD WITH TESTS" ON)
+
 if(BUILD_TESTING)
   enable_testing()
   add_subdirectory(test)

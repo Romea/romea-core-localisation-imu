@@ -162,7 +162,7 @@ TEST_F(TestAngularSpeedBias, testResetAfterAllOK)
 
   angularSpeedBiasEstimator.reset(false);
   auto report = angularSpeedBiasEstimator.getReport();
-  EXPECT_EQ(report.diagnostics.front().status, romea::core::DiagnosticStatus::STALE);
+  EXPECT_EQ(report.diagnostics.front().status, romea::core::DiagnosticStatus::WARN);
 }
 
 //-----------------------------------------------------------------------------

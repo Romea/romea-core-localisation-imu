@@ -127,7 +127,7 @@ void AngularSpeedBias::reset(bool resetZeroVelocityEstimator)
 
   imu_angular_speed_bias_estimator_.reset();
   setReportInfo(report_, "angular_speed_bias", "");
-  setDiagnostic_(DiagnosticStatus::WARN, "Angular speed bias not available.");
+  set_diagnostic_(DiagnosticStatus::WARN, "Angular speed bias not available.");
 }
 
 //-----------------------------------------------------------------------------

@@ -1,52 +1,7 @@
-before_script:
-  # Install ssh-agent if not already installed, it is required by Docker.
-  - "apt-get -qq update -y"
-  - "apt-get -qq install git build-essential openssh-client python3-vcstool sudo -y"
-  - if [[ "$ROS_DISTRO" == "noetic" ]]; then apt-get -qq install python3-catkin-tools sudo -y; fi
-  # Run ssh-agent (inside the build environment)
-  - eval $(ssh-agent -s)
-  # Add the SSH key stored in SSH_PRIVATE_KEY variable to the agent store
-  - ssh-add <(echo "$SSH_PRIVATE_KEY")
-  # For Docker builds disable host key checking. Be aware that by adding that
-  # you are suspectible to man-in-the-middle attacks.
-  # WARNING: Use this only with the Docker executor, if you use it with shell
-  # you will overwrite your user's SSH config.
-  - mkdir -p ~/.ssh
-  - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-  # create workspace
-  - rm -rf ${CI_PROJECT_DIR}/workspace/src >/dev/null 2>&1
-  - mkdir -p ${CI_PROJECT_DIR}/workspace/src
-  - cd ${CI_PROJECT_DIR}/workspace
-  - vcs import src < ${CI_PROJECT_DIR}/${CI_PROJECT_NAME}.repos
-  - set +e
-  - vcs custom --git --args checkout ${CI_COMMIT_BRANCH}
-  - set -e
-  - rosdep install --from-paths src --ignore-src -y --as-root apt:false
+include:
+  - project: "jean.laneurit/ros_gitlab_ci"
+    file: ".gitlab-ci.yml"
 
-# noetic
-noetic_catkin_build:
-  image: ros:noetic-robot
-  stage: build
-  script:
-    - catkin init
-    - catkin build --cmake-args -DBUILD_TESTS=ON
-    - cd build/romea_core_localisation_imu
-    - GTEST_COLOR=1 ctest --output-on-failure
 
-# galatic
-galactic_focal_build:
-  image: ros:galactic-ros-base-focal
-  stage: build
-  script:
-    - colcon build --cmake-args -DBUILD_TESTS=ON
-    - cd build/romea_core_localisation_imu
-    - GTEST_COLOR=1 ctest --output-on-failure
-
-# galatic
-humble_jammy_build:
-  image: ros:humble-ros-base-jammy
-  stage: build
-  script:
-    - colcon build --cmake-args -DBUILD_TESTS=ON
-    - cd build/romea_core_localisation_imu
-    - GTEST_COLOR=1 ctest --output-on-failure
+variables:
+  PKGS_TO_BUILD_TEST: "romea_core_localisation_imu"

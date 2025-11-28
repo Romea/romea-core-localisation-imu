@@ -11,6 +11,6 @@ repositories:
     romea_core/romea_localisation:
         type: git
         url: git@forge.inrae.fr:romea_core/romea_localisation.git
-    romea_core/romea_localisation_gps:
+    romea_core/romea_localisation_imu:
         type: git
         url: git@forge.inrae.fr:romea_core/romea_localisation_imu.git

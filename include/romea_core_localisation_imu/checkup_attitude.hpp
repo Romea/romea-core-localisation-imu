@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION_IMU__CHECKUP_ATTITUDE_HPP_
 #define ROMEA_CORE_LOCALISATION_IMU__CHECKUP_ATTITUDE_HPP_
 
@@ -23,7 +22,6 @@
 // std
 #include <mutex>
 #include <string>
-
 
 namespace romea
 {
@@ -39,7 +37,7 @@ public:
 
   DiagnosticStatus evaluate(const RollPitchCourseFrame & frame);
 
-  DiagnosticReport get_report()const;
+  DiagnosticReport get_report() const;
 
   void reset();
 

@@ -12,21 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION_IMU__ANGULAR_SPEED_BIAS_HPP_
 #define ROMEA_CORE_LOCALISATION_IMU__ANGULAR_SPEED_BIAS_HPP_
 
 // romea
-#include <romea_core_imu/algorithms/ZeroVelocityEstimator.hpp>
+#include <romea_core_common/diagnostic/DiagnosticReport.hpp>
 #include <romea_core_imu/AccelerationsFrame.hpp>
 #include <romea_core_imu/AngularSpeedsFrame.hpp>
-#include <romea_core_common/diagnostic/DiagnosticReport.hpp>
+#include <romea_core_imu/algorithms/ZeroVelocityEstimator.hpp>
 
 // std
+#include <mutex>
 #include <optional>
 #include <string>
-#include <mutex>
-
 
 namespace romea
 {
@@ -48,16 +46,15 @@ public:
     const AccelerationsFrame & accelerations,
     const AngularSpeedsFrame & angularSpeeds);
 
-  DiagnosticReport get_report()const;
+  DiagnosticReport get_report() const;
 
   void reset(bool resetZeroVelocityEstimator);
 
 private:
-  bool has_null_linear_speed_(const double & linearSpeed)const;
+  bool has_null_linear_speed_(const double & linearSpeed) const;
 
   bool has_zero_velocity_(
-    const AccelerationsFrame & accelerations,
-    const AngularSpeedsFrame & angularSpeeds);
+    const AccelerationsFrame & accelerations, const AngularSpeedsFrame & angularSpeeds);
 
   void update_angular_speed_bias_(
     const double & linearSpeed,

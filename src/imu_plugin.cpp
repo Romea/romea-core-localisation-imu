@@ -12,12 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // std
 #include <limits>
 #include <memory>
-#include <utility>
 #include <string>
+#include <utility>
 
 // local
 #include "romea_core_localisation_imu/imu_plugin.hpp"
@@ -37,20 +36,14 @@ namespace localisation
 //-----------------------------------------------------------------------------
 IMUPlugin::IMUPlugin(std::unique_ptr<IMUAHRS> imu)
 : imu_(std::move(imu)),
-  imu_angular_speed_bias_(imu_->getRate(),
-    imu_->getAccelerationStd(),
-    imu_->getAngularSpeedStd()),
+  imu_angular_speed_bias_(imu_->getRate(), imu_->getAccelerationStd(), imu_->getAngularSpeedStd()),
   linear_speed_(std::numeric_limits<double>::quiet_NaN()),
-  attitude_rate_diagnostic_("attitude",
-    imu_->getRate(),
-    imu_->getRate() * 0.1),
+  attitude_rate_diagnostic_("attitude", imu_->getRate(), imu_->getRate() * 0.1),
   linear_speed_rate_diagnostic_("linear_speed", 10.0, 1.),
-  inertial_measurement_rate_diagnostic_("inertial_measurements",
-    imu_->getRate(),
-    imu_->getRate() * 0.1),
+  inertial_measurement_rate_diagnostic_(
+    "inertial_measurements", imu_->getRate(), imu_->getRate() * 0.1),
   attitude_diagnostic_(),
-  inertial_measurement_diagnostic_(imu_->getAccelerationRange(),
-    imu_->getAngularSpeedRange()),
+  inertial_measurement_diagnostic_(imu_->getAccelerationRange(), imu_->getAngularSpeedRange()),
   debug_logger_()
 {
 }
@@ -62,9 +55,7 @@ void IMUPlugin::enable_debug_log(const std::string & logFilename)
 }
 
 //-----------------------------------------------------------------------------
-void IMUPlugin::process_linear_speed(
-  const Duration & stamp,
-  const double & linearSpeed)
+void IMUPlugin::process_linear_speed(const Duration & stamp, const double & linearSpeed)
 {
   if (linear_speed_rate_diagnostic_.evaluate(stamp) == DiagnosticStatus::OK) {
     linear_speed_.store(linearSpeed);
@@ -82,24 +73,18 @@ bool IMUPlugin::compute_angular_speed(
   const double & angularSpeedAroundZAxis,
   ObservationAngularSpeed & angularSpeed)
 {
-  AccelerationsFrame accelerations =
-    imu_->createAccelerationsFrame(
-    accelerationAlongXAxis,
-    accelerationAlongYAxis,
-    accelerationAlongZAxis);
+  AccelerationsFrame accelerations = imu_->createAccelerationsFrame(
+    accelerationAlongXAxis, accelerationAlongYAxis, accelerationAlongZAxis);
 
+  AngularSpeedsFrame angularSpeeds = imu_->createAngularSpeedsFrame(
+    angularSpeedAroundXAxis, angularSpeedAroundYAxis, angularSpeedAroundZAxis);
 
-  AngularSpeedsFrame angularSpeeds =
-    imu_->createAngularSpeedsFrame(
-    angularSpeedAroundXAxis,
-    angularSpeedAroundYAxis,
-    angularSpeedAroundZAxis);
-
-  if (inertial_measurement_rate_diagnostic_.evaluate(stamp) == DiagnosticStatus::OK &&
-    inertial_measurement_diagnostic_.evaluate(accelerations, angularSpeeds) == DiagnosticStatus::OK)
-  {
-    auto angularSpeedBias = imu_angular_speed_bias_.
-      evaluate(linear_speed_.load(), accelerations, angularSpeeds);
+  if (
+    inertial_measurement_rate_diagnostic_.evaluate(stamp) == DiagnosticStatus::OK &&
+    inertial_measurement_diagnostic_.evaluate(accelerations, angularSpeeds) ==
+      DiagnosticStatus::OK) {
+    auto angularSpeedBias =
+      imu_angular_speed_bias_.evaluate(linear_speed_.load(), accelerations, angularSpeeds);
 
     if (angularSpeedBias.has_value()) {
       angularSpeed.Y() = angularSpeeds.angularSpeedAroundZAxis - angularSpeedBias.value();
@@ -110,7 +95,6 @@ bool IMUPlugin::compute_angular_speed(
   return false;
 }
 
-
 //-----------------------------------------------------------------------------
 bool IMUPlugin::compute_attitude(
   const Duration & stamp,
@@ -119,14 +103,11 @@ bool IMUPlugin::compute_attitude(
   const double & courseAngle,
   ObservationAttitude & attitude)
 {
-  RollPitchCourseFrame frame = imu_->createFrame(
-    rollAngle,
-    pitchAngle,
-    courseAngle);
+  RollPitchCourseFrame frame = imu_->createFrame(rollAngle, pitchAngle, courseAngle);
 
-  if (attitude_rate_diagnostic_.evaluate(stamp) == DiagnosticStatus::OK &&
-    attitude_diagnostic_.evaluate(frame) == DiagnosticStatus::OK)
-  {
+  if (
+    attitude_rate_diagnostic_.evaluate(stamp) == DiagnosticStatus::OK &&
+    attitude_diagnostic_.evaluate(frame) == DiagnosticStatus::OK) {
     attitude.Y(ObservationAttitude::ROLL) = rollAngle;
     attitude.Y(ObservationAttitude::PITCH) = pitchAngle;
     attitude.R() = Eigen::Matrix2d::Identity() * imu_->getAngleVariance();

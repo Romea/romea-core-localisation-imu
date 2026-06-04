@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // std
 #include <string>
 
@@ -27,8 +26,7 @@ namespace localisation
 {
 
 //-----------------------------------------------------------------------------
-CheckupAttitude::CheckupAttitude()
-: report_()
+CheckupAttitude::CheckupAttitude() : report_()
 {
 }
 
@@ -53,11 +51,8 @@ DiagnosticStatus CheckupAttitude::evaluate(const RollPitchCourseFrame & frame)
   return report_.diagnostics.front().status;
 }
 
-
 //-----------------------------------------------------------------------------
-void CheckupAttitude::set_diagnostic_(
-  const DiagnosticStatus & status,
-  const std::string & message)
+void CheckupAttitude::set_diagnostic_(const DiagnosticStatus & status, const std::string & message)
 {
   report_.diagnostics.clear();
   report_.diagnostics.push_back({status, message});
@@ -66,9 +61,7 @@ void CheckupAttitude::set_diagnostic_(
 //-----------------------------------------------------------------------------
 bool CheckupAttitude::check_attitude_angles_(const RollPitchCourseFrame & frame)
 {
-  return frame.rollAngle >= -M_PI_2 &&
-         frame.rollAngle <= M_PI_2 &&
-         frame.pitchAngle >= -M_PI_2 &&
+  return frame.rollAngle >= -M_PI_2 && frame.rollAngle <= M_PI_2 && frame.pitchAngle >= -M_PI_2 &&
          frame.pitchAngle <= M_PI_2;
 }
 
@@ -88,7 +81,7 @@ void CheckupAttitude::reset()
 }
 
 //-----------------------------------------------------------------------------
-DiagnosticReport CheckupAttitude::get_report()const
+DiagnosticReport CheckupAttitude::get_report() const
 {
   std::lock_guard<std::mutex> lock(mutex_);
   return report_;

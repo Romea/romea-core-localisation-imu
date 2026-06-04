@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // gtest
 #include <gtest/gtest.h>
 
@@ -22,7 +21,7 @@
 // romea
 #include "romea_core_localisation_imu/checkup_inertial_measurements.hpp"
 
-using namespace romea::core; // NOLINT
+using namespace romea::core;  // NOLINT
 
 class TestInertialMeasurementsDiagnostic : public ::testing::Test
 {
@@ -44,11 +43,9 @@ TEST_F(TestInertialMeasurementsDiagnostic, checkGoodFrames)
 {
   EXPECT_EQ(diagnostic.evaluate(accelerations, angularSpeeds), romea::core::DiagnosticStatus::OK);
   EXPECT_STREQ(
-    diagnostic.get_report().diagnostics.front().message.c_str(),
-    "Acceleration data is OK.");
+    diagnostic.get_report().diagnostics.front().message.c_str(), "Acceleration data is OK.");
   EXPECT_STREQ(
-    diagnostic.get_report().diagnostics.back().message.c_str(),
-    "Angular speed data is OK.");
+    diagnostic.get_report().diagnostics.back().message.c_str(), "Angular speed data is OK.");
   EXPECT_STREQ(diagnostic.get_report().info.at("acceleration_x").c_str(), "-1");
   EXPECT_STREQ(diagnostic.get_report().info.at("acceleration_y").c_str(), "1");
   EXPECT_STREQ(diagnostic.get_report().info.at("acceleration_z").c_str(), "9.81");

@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // std
 #include <string>
 
@@ -23,7 +22,7 @@ namespace
 {
 const double ANGULAR_SPEED_BIAS_EPSILON = 0.0001;
 const double LINEAR_SPEED_EPSILON = 0.02;
-}
+}  // namespace
 
 namespace romea
 {
@@ -34,9 +33,7 @@ namespace localisation
 
 //-----------------------------------------------------------------------------
 AngularSpeedBias::AngularSpeedBias(
-  const double & imuRate,
-  const double & accelerationSpeedStd,
-  const double & angularSpeedStd)
+  const double & imuRate, const double & accelerationSpeedStd, const double & angularSpeedStd)
 : zero_velocity_(imuRate, accelerationSpeedStd, angularSpeedStd),
   imu_angular_speed_bias_estimator_(ANGULAR_SPEED_BIAS_EPSILON, 5 * imuRate),
   mutex_(),
@@ -49,15 +46,14 @@ AngularSpeedBias::AngularSpeedBias(
 }
 
 //-----------------------------------------------------------------------------
-bool AngularSpeedBias::has_null_linear_speed_(const double & linear_speed)const
+bool AngularSpeedBias::has_null_linear_speed_(const double & linear_speed) const
 {
   return std::isfinite(linear_speed) && std::abs(linear_speed) < LINEAR_SPEED_EPSILON;
 }
 
 //-----------------------------------------------------------------------------
 bool AngularSpeedBias::has_zero_velocity_(
-  const AccelerationsFrame & accelerations,
-  const AngularSpeedsFrame & angularSpeeds)
+  const AccelerationsFrame & accelerations, const AngularSpeedsFrame & angularSpeeds)
 {
   return zero_velocity_.update(
     accelerations.accelerationAlongXAxis,
@@ -67,7 +63,6 @@ bool AngularSpeedBias::has_zero_velocity_(
     angularSpeeds.angularSpeedAroundYAxis,
     angularSpeeds.angularSpeedAroundZAxis);
 }
-
 
 //-----------------------------------------------------------------------------
 void AngularSpeedBias::update_angular_speed_bias_(
@@ -83,7 +78,6 @@ void AngularSpeedBias::update_angular_speed_bias_(
   }
 }
 
-
 //-----------------------------------------------------------------------------
 std::optional<double> AngularSpeedBias::evaluate(
   const double & linearSpeed,
@@ -96,8 +90,7 @@ std::optional<double> AngularSpeedBias::evaluate(
   setReportInfo(report_, "acceleration_std", zero_velocity_.getAccelerationStd());
   setReportInfo(report_, "angular_speed_std", zero_velocity_.getAngularSpeedStd());
   setReportInfo(
-    report_, "linear_speed", std::isfinite(linearSpeed) ? std::to_string(
-      linearSpeed) : "");
+    report_, "linear_speed", std::isfinite(linearSpeed) ? std::to_string(linearSpeed) : "");
 
   if (imu_angular_speed_bias_estimator_.isAvailable()) {
     double angularSpeedBias = imu_angular_speed_bias_estimator_.getAverage();
@@ -131,16 +124,14 @@ void AngularSpeedBias::reset(bool resetZeroVelocityEstimator)
 }
 
 //-----------------------------------------------------------------------------
-void AngularSpeedBias::set_diagnostic_(
-  const DiagnosticStatus & status,
-  const std::string & message)
+void AngularSpeedBias::set_diagnostic_(const DiagnosticStatus & status, const std::string & message)
 {
   report_.diagnostics.clear();
   report_.diagnostics.push_back({status, message});
 }
 
 //-----------------------------------------------------------------------------
-DiagnosticReport AngularSpeedBias::get_report()const
+DiagnosticReport AngularSpeedBias::get_report() const
 {
   std::lock_guard<std::mutex> lock(mutex_);
   return report_;

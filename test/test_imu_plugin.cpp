@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // gtest
 #include <gtest/gtest.h>
 
@@ -24,7 +23,7 @@
 // romea
 #include "romea_core_localisation_imu/imu_plugin.hpp"
 
-using namespace romea::core; // NOLINT
+using namespace romea::core;  // NOLINT
 
 bool boolean(const DiagnosticStatus & status)
 {
@@ -59,9 +58,15 @@ public:
   {
     auto imu = std::make_unique<IMUAHRS>(
       10,
-      0.0005, 0.02, 10.,
-      3.4907e-04 / 180. * M_PI, 3.4907e-02 / 180. * M_PI, 300. / 180. * M_PI,
-      7.e-09, 1.e-08, 0.000075,
+      0.0005,
+      0.02,
+      10.,
+      3.4907e-04 / 180. * M_PI,
+      3.4907e-02 / 180. * M_PI,
+      300. / 180. * M_PI,
+      7.e-09,
+      1.e-08,
+      0.000075,
       0.01745);
 
     plugin = std::make_unique<localisation::IMUPlugin>(std::move(imu));
@@ -94,7 +99,8 @@ public:
         angularSpeedX + angularSpeedDistribution(generator),
         angularSpeedY + angularSpeedDistribution(generator),
         angularSpeedZ + angularSpeedDistribution(generator),
-        angularSpeedObs), boolean(angularBiasStatus));
+        angularSpeedObs),
+      boolean(angularBiasStatus));
 
     EXPECT_EQ(
       plugin->compute_attitude(
@@ -102,8 +108,8 @@ public:
         attitudeX + attitudeDistribution(generator),
         attitudeY + attitudeDistribution(generator),
         attitudeZ + attitudeDistribution(generator),
-        attitudeObs), boolean(attitudeStatus));
-
+        attitudeObs),
+      boolean(attitudeStatus));
 
     report = plugin->make_diagnostic_report(stamp);
 
@@ -135,11 +141,11 @@ public:
         report.diagnostics.size(),
         6 + static_cast<int>(finalAngularBiasStatus != DiagnosticStatus::STALE));
       EXPECT_EQ(
-        diagnostic(0).status, std::isfinite(linearSpeed) ?
-        DiagnosticStatus::OK : DiagnosticStatus::ERROR);
-      EXPECT_EQ(diagnostic(1).status, DiagnosticStatus::OK);  // atttiude rate
-      EXPECT_EQ(diagnostic(2).status, finalAttitudeStatus);  // atttiude
-      EXPECT_EQ(diagnostic(3).status, DiagnosticStatus::OK);  // inertial rate
+        diagnostic(0).status,
+        std::isfinite(linearSpeed) ? DiagnosticStatus::OK : DiagnosticStatus::ERROR);
+      EXPECT_EQ(diagnostic(1).status, DiagnosticStatus::OK);     // atttiude rate
+      EXPECT_EQ(diagnostic(2).status, finalAttitudeStatus);      // atttiude
+      EXPECT_EQ(diagnostic(3).status, DiagnosticStatus::OK);     // inertial rate
       EXPECT_EQ(diagnostic(4).status, finalAccelerationStatus);  // acceleration
       EXPECT_EQ(diagnostic(5).status, finalAngularSpeedStatus);  // angular speeds
 
@@ -153,11 +159,11 @@ public:
       report.diagnostics.size(),
       6 + static_cast<int>(finalAngularBiasStatus != DiagnosticStatus::STALE));
     EXPECT_EQ(
-      diagnostic(0).status, std::isfinite(linearSpeed) ?
-      DiagnosticStatus::OK : DiagnosticStatus::ERROR);
-    EXPECT_EQ(diagnostic(1).status, DiagnosticStatus::OK);  // atttiude rate
-    EXPECT_EQ(diagnostic(2).status, finalAttitudeStatus);  // atttiude
-    EXPECT_EQ(diagnostic(3).status, DiagnosticStatus::OK);  // inertial rate
+      diagnostic(0).status,
+      std::isfinite(linearSpeed) ? DiagnosticStatus::OK : DiagnosticStatus::ERROR);
+    EXPECT_EQ(diagnostic(1).status, DiagnosticStatus::OK);     // atttiude rate
+    EXPECT_EQ(diagnostic(2).status, finalAttitudeStatus);      // atttiude
+    EXPECT_EQ(diagnostic(3).status, DiagnosticStatus::OK);     // inertial rate
     EXPECT_EQ(diagnostic(4).status, finalAccelerationStatus);  // acceleration
     EXPECT_EQ(diagnostic(5).status, finalAngularSpeedStatus);  // angular speeds
 
@@ -182,16 +188,15 @@ public:
   DiagnosticReport report;
 };
 
-
 //-----------------------------------------------------------------------------
 TEST_F(TestIMUPlugin, testAllOk)
 {
   check(
-    DiagnosticStatus::OK,     // finalLinearSpeedStatus
-    DiagnosticStatus::OK,    // finalAccelerationStatus
-    DiagnosticStatus::OK,    // finalAngularSpeedStatus
-    DiagnosticStatus::OK,    // finalAttitudeStatus
-    DiagnosticStatus::OK);    // finalAngularBiasStatus
+    DiagnosticStatus::OK,   // finalLinearSpeedStatus
+    DiagnosticStatus::OK,   // finalAccelerationStatus
+    DiagnosticStatus::OK,   // finalAngularSpeedStatus
+    DiagnosticStatus::OK,   // finalAttitudeStatus
+    DiagnosticStatus::OK);  // finalAngularBiasStatus
 }
 
 //-----------------------------------------------------------------------------
@@ -200,9 +205,9 @@ TEST_F(TestIMUPlugin, testAttitudeOutOfRange)
   attitudeX = M_PI;
   check(
     DiagnosticStatus::OK,     // finalLinearSpeedStatus
-    DiagnosticStatus::OK,    // finalAccelerationStatus
-    DiagnosticStatus::OK,    // finalAngularSpeedStatus
-    DiagnosticStatus::ERROR,    // finalAttitudeStatus
+    DiagnosticStatus::OK,     // finalAccelerationStatus
+    DiagnosticStatus::OK,     // finalAngularSpeedStatus
+    DiagnosticStatus::ERROR,  // finalAttitudeStatus
     DiagnosticStatus::OK);    // finalAngularBiasStatus
 }
 
@@ -211,11 +216,11 @@ TEST_F(TestIMUPlugin, testAngularSpeedOutOfRange)
 {
   angularSpeedZ = 2 * M_PI;
   check(
-    DiagnosticStatus::OK,     // finalLinearSpeedStatus
-    DiagnosticStatus::OK,    // finalAccelerationStatus
-    DiagnosticStatus::ERROR,    // finalAngularSpeedStatus
-    DiagnosticStatus::OK,    // finalAttitudeStatus
-    DiagnosticStatus::STALE);    // finalAngularBiasStatus
+    DiagnosticStatus::OK,      // finalLinearSpeedStatus
+    DiagnosticStatus::OK,      // finalAccelerationStatus
+    DiagnosticStatus::ERROR,   // finalAngularSpeedStatus
+    DiagnosticStatus::OK,      // finalAttitudeStatus
+    DiagnosticStatus::STALE);  // finalAngularBiasStatus
 }
 
 //-----------------------------------------------------------------------------
@@ -223,11 +228,11 @@ TEST_F(TestIMUPlugin, testAccelerationOutOfRange)
 {
   accelerationZ = 20;
   check(
-    DiagnosticStatus::OK,     // finalLinearSpeedStatus
-    DiagnosticStatus::ERROR,    // finalAccelerationStatus
-    DiagnosticStatus::OK,    // finalAngularSpeedStatus
-    DiagnosticStatus::OK,    // finalAttitudeStatus
-    DiagnosticStatus::STALE);    // finalAngularBiasStatus
+    DiagnosticStatus::OK,      // finalLinearSpeedStatus
+    DiagnosticStatus::ERROR,   // finalAccelerationStatus
+    DiagnosticStatus::OK,      // finalAngularSpeedStatus
+    DiagnosticStatus::OK,      // finalAttitudeStatus
+    DiagnosticStatus::STALE);  // finalAngularBiasStatus
 }
 
 //-----------------------------------------------------------------------------
@@ -236,24 +241,23 @@ TEST_F(TestIMUPlugin, testLinearSpeedNotEqualZero)
   linearSpeed = 1;
   check(
     DiagnosticStatus::OK,     // finalLinearSpeedStatus
-    DiagnosticStatus::OK,    // finalAccelerationStatus
-    DiagnosticStatus::OK,    // finalAngularSpeedStatus
-    DiagnosticStatus::OK,    // finalAttitudeStatus
-    DiagnosticStatus::WARN);    // finalAngularBiasStatus
+    DiagnosticStatus::OK,     // finalAccelerationStatus
+    DiagnosticStatus::OK,     // finalAngularSpeedStatus
+    DiagnosticStatus::OK,     // finalAttitudeStatus
+    DiagnosticStatus::WARN);  // finalAngularBiasStatus
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestIMUPlugin, testAngularSpeedStdToHigh)
 {
-  angularSpeedDistribution = std::normal_distribution<double>(
-    0, 100 * 3.4907e-04 * std::sqrt(
-      10) / 180. * M_PI);
+  angularSpeedDistribution =
+    std::normal_distribution<double>(0, 100 * 3.4907e-04 * std::sqrt(10) / 180. * M_PI);
   check(
     DiagnosticStatus::OK,     // finalLinearSpeedStatus
-    DiagnosticStatus::OK,    // finalAccelerationStatus
-    DiagnosticStatus::OK,    // finalAngularSpeedStatus
-    DiagnosticStatus::OK,    // finalAttitudeStatus
-    DiagnosticStatus::WARN);    // finalAngularBiasStatus
+    DiagnosticStatus::OK,     // finalAccelerationStatus
+    DiagnosticStatus::OK,     // finalAngularSpeedStatus
+    DiagnosticStatus::OK,     // finalAttitudeStatus
+    DiagnosticStatus::WARN);  // finalAngularBiasStatus
 }
 
 //-----------------------------------------------------------------------------
@@ -262,33 +266,33 @@ TEST_F(TestIMUPlugin, testAccelerationStdToHigh)
   accelerationDistribution = std::normal_distribution<double>(0, 100 * 0.0005 * std::sqrt(10));
   check(
     DiagnosticStatus::OK,     // finalLinearSpeedStatus
-    DiagnosticStatus::OK,    // finalAccelerationStatus
-    DiagnosticStatus::OK,    // finalAngularSpeedStatus
-    DiagnosticStatus::OK,    // finalAttitudeStatus
-    DiagnosticStatus::WARN);    // finalAngularBiasStatus
+    DiagnosticStatus::OK,     // finalAccelerationStatus
+    DiagnosticStatus::OK,     // finalAngularSpeedStatus
+    DiagnosticStatus::OK,     // finalAttitudeStatus
+    DiagnosticStatus::WARN);  // finalAngularBiasStatus
 }
 
 //-----------------------------------------------------------------------------
 TEST_F(TestIMUPlugin, testTimeout)
 {
   check(
-    DiagnosticStatus::OK,     // finalLinearSpeedStatus
-    DiagnosticStatus::OK,    // finalAccelerationStatus
-    DiagnosticStatus::OK,    // finalAngularSpeedStatus
-    DiagnosticStatus::OK,    // finalAttitudeStatus
-    DiagnosticStatus::OK);    // finalAngularBiasStatus
+    DiagnosticStatus::OK,   // finalLinearSpeedStatus
+    DiagnosticStatus::OK,   // finalAccelerationStatus
+    DiagnosticStatus::OK,   // finalAngularSpeedStatus
+    DiagnosticStatus::OK,   // finalAttitudeStatus
+    DiagnosticStatus::OK);  // finalAngularBiasStatus
 
   report = plugin->make_diagnostic_report(durationFromSecond(10.));
 
-//  for(auto diag : report.diagnostics)
-//  {
-//    std::cout << diag.status <<" "<< diag.message << std::endl;
-//  }
+  //  for(auto diag : report.diagnostics)
+  //  {
+  //    std::cout << diag.status <<" "<< diag.message << std::endl;
+  //  }
 
-//  for(auto info : report.info)
-//  {
-//    std::cout << info.first <<" "<< info.second<< std::endl;
-//  }
+  //  for(auto info : report.info)
+  //  {
+  //    std::cout << info.first <<" "<< info.second<< std::endl;
+  //  }
 }
 
 //-----------------------------------------------------------------------------

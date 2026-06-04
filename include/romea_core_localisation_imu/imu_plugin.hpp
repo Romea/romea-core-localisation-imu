@@ -12,15 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 #ifndef ROMEA_CORE_LOCALISATION_IMU__LOCALISATIONIMUPLUGIN_HPP_
 #define ROMEA_CORE_LOCALISATION_IMU__LOCALISATIONIMUPLUGIN_HPP_
 
-
 // romea
-#include <romea_core_imu/IMUAHRS.hpp>
-#include <romea_core_common/log/SimpleFileLogger.hpp>
 #include <romea_core_common/diagnostic/CheckupRate.hpp>
+#include <romea_core_common/log/SimpleFileLogger.hpp>
+#include <romea_core_imu/IMUAHRS.hpp>
 #include <romea_core_localisation/observation_angular_speed.hpp>
 #include <romea_core_localisation/observation_attitude.hpp>
 
@@ -29,9 +27,9 @@
 #include <string>
 
 // local
-#include "romea_core_localisation_imu/checkup_inertial_measurements.hpp"
-#include "romea_core_localisation_imu/checkup_attitude.hpp"
 #include "romea_core_localisation_imu/angular_speed_bias.hpp"
+#include "romea_core_localisation_imu/checkup_attitude.hpp"
+#include "romea_core_localisation_imu/checkup_inertial_measurements.hpp"
 
 namespace romea
 {
@@ -47,9 +45,7 @@ public:
 
   void enable_debug_log(const std::string & logFilename);
 
-  void process_linear_speed(
-    const Duration & stamp,
-    const double & linearSpeed);
+  void process_linear_speed(const Duration & stamp, const double & linearSpeed);
 
   bool compute_angular_speed(
     const Duration & stamp,

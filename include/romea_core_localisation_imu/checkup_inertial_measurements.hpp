@@ -16,9 +16,9 @@
 #define ROMEA_CORE_LOCALISATION_IMU__CHECKUP_INERTIAL_MEASUREMENTS_HPP_
 
 // romea
+#include <romea_core_common/diagnostic/DiagnosticReport.hpp>
 #include <romea_core_imu/AccelerationsFrame.hpp>
 #include <romea_core_imu/AngularSpeedsFrame.hpp>
-#include <romea_core_common/diagnostic/DiagnosticReport.hpp>
 
 // std
 #include <mutex>
@@ -35,12 +35,10 @@ class CheckupInertialMeasurements
 {
 public:
   CheckupInertialMeasurements(
-    const double & acceleration_range,
-    const double & angular_speed_range);
+    const double & acceleration_range, const double & angular_speed_range);
 
   DiagnosticStatus evaluate(
-    const AccelerationsFrame & accelerations,
-    const AngularSpeedsFrame & angular_speeds);
+    const AccelerationsFrame & accelerations, const AngularSpeedsFrame & angular_speeds);
 
   DiagnosticReport get_report() const;
 

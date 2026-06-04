@@ -12,23 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // gtest
 #include <gtest/gtest.h>
 
 // romea
 #include "romea_core_localisation_imu/checkup_attitude.hpp"
 
-using namespace romea::core; // NOLINT
+using namespace romea::core;  // NOLINT
 
 class TestAttitudeDiagnostic : public ::testing::Test
 {
 public:
-  TestAttitudeDiagnostic()
-  : frame(),
-    diagnostic()
-  {
-  }
+  TestAttitudeDiagnostic() : frame(), diagnostic() {}
 
   RollPitchCourseFrame frame;
   localisation::CheckupAttitude diagnostic;

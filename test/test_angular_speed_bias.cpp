@@ -12,14 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // gtest
 #include <gtest/gtest.h>
 
 // std
+#include <iostream>
 #include <random>
 #include <string>
-#include <iostream>
 
 // romea
 #include "romea_core_localisation_imu/angular_speed_bias.hpp"
@@ -28,7 +27,6 @@ bool boolean(const romea::core::DiagnosticStatus & status)
 {
   return status == romea::core::DiagnosticStatus::OK;
 }
-
 
 class TestAngularSpeedBias : public ::testing::Test
 {
@@ -62,16 +60,14 @@ public:
     angularSpeeds.angularSpeedAroundZAxis = angularSpeedDistribution(generator);
   }
 
-  void check(
-    const romea::core::DiagnosticStatus & finalStatus,
-    const std::string & finalMessage)
+  void check(const romea::core::DiagnosticStatus & finalStatus, const std::string & finalMessage)
   {
     for (size_t n = 0; n < (5 + 2) * rate - 2; ++n) {
       makeAccelerationFrame();
       makeAngularSpeedFrame();
 
-      auto angularSpeedBias = angularSpeedBiasEstimator.evaluate(
-        linearSpeed, accelerations, angularSpeeds);
+      auto angularSpeedBias =
+        angularSpeedBiasEstimator.evaluate(linearSpeed, accelerations, angularSpeeds);
 
       EXPECT_FALSE(angularSpeedBias.has_value());
       EXPECT_EQ(
@@ -85,8 +81,8 @@ public:
     makeAccelerationFrame();
     makeAngularSpeedFrame();
 
-    auto angularSpeedBias = angularSpeedBiasEstimator.evaluate(
-      linearSpeed, accelerations, angularSpeeds);
+    auto angularSpeedBias =
+      angularSpeedBiasEstimator.evaluate(linearSpeed, accelerations, angularSpeeds);
 
     EXPECT_EQ(angularSpeedBias.has_value(), boolean(finalStatus));
     EXPECT_EQ(angularSpeedBiasEstimator.get_report().diagnostics.front().status, finalStatus);
@@ -94,7 +90,6 @@ public:
       angularSpeedBiasEstimator.get_report().diagnostics.front().message.c_str(),
       finalMessage.c_str());
   }
-
 
   double rate;
   double accelerationStd;

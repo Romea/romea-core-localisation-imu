@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 // std
 #include <string>
 
@@ -28,11 +27,8 @@ namespace localisation
 
 //-----------------------------------------------------------------------------
 CheckupInertialMeasurements::CheckupInertialMeasurements(
-  const double & accelerationRange,
-  const double & angularSpeedRange)
-: acceleration_range_(accelerationRange),
-  angular_speed_range_(angularSpeedRange),
-  report_()
+  const double & accelerationRange, const double & angularSpeedRange)
+: acceleration_range_(accelerationRange), angular_speed_range_(angularSpeedRange), report_()
 {
   declare_report_infos_();
 }
@@ -50,8 +46,7 @@ void CheckupInertialMeasurements::declare_report_infos_()
 
 //-----------------------------------------------------------------------------
 DiagnosticStatus CheckupInertialMeasurements::evaluate(
-  const AccelerationsFrame & accelerations,
-  const AngularSpeedsFrame & angular_speeds)
+  const AccelerationsFrame & accelerations, const AngularSpeedsFrame & angular_speeds)
 {
   std::lock_guard<std::mutex> lock(mutex_);
   report_.diagnostics.clear();
@@ -63,13 +58,12 @@ DiagnosticStatus CheckupInertialMeasurements::evaluate(
 }
 
 //--------------------------------------------------------------------
-void CheckupInertialMeasurements::check_accelerations_(
-  const AccelerationsFrame & accelerationFrame)
+void CheckupInertialMeasurements::check_accelerations_(const AccelerationsFrame & accelerationFrame)
 {
-  if (std::abs(accelerationFrame.accelerationAlongXAxis) > acceleration_range_ ||
+  if (
+    std::abs(accelerationFrame.accelerationAlongXAxis) > acceleration_range_ ||
     std::abs(accelerationFrame.accelerationAlongYAxis) > acceleration_range_ ||
-    std::abs(accelerationFrame.accelerationAlongZAxis) > acceleration_range_)
-  {
+    std::abs(accelerationFrame.accelerationAlongZAxis) > acceleration_range_) {
     add_diagnostic_(DiagnosticStatus::ERROR, "Acceleration data is out of range.");
   } else {
     add_diagnostic_(DiagnosticStatus::OK, "Acceleration data is OK.");
@@ -80,16 +74,15 @@ void CheckupInertialMeasurements::check_accelerations_(
 void CheckupInertialMeasurements::check_angular_speeds_(
   const AngularSpeedsFrame & angularSpeedFrame)
 {
-  if (std::abs(angularSpeedFrame.angularSpeedAroundXAxis) > angular_speed_range_ ||
+  if (
+    std::abs(angularSpeedFrame.angularSpeedAroundXAxis) > angular_speed_range_ ||
     std::abs(angularSpeedFrame.angularSpeedAroundYAxis) > angular_speed_range_ ||
-    std::abs(angularSpeedFrame.angularSpeedAroundZAxis) > angular_speed_range_)
-  {
+    std::abs(angularSpeedFrame.angularSpeedAroundZAxis) > angular_speed_range_) {
     add_diagnostic_(DiagnosticStatus::ERROR, "Angular speed data is out of range.");
   } else {
     add_diagnostic_(DiagnosticStatus::OK, "Angular speed data is OK.");
   }
 }
-
 
 //-----------------------------------------------------------------------------
 DiagnosticReport CheckupInertialMeasurements::get_report() const
@@ -116,8 +109,7 @@ void CheckupInertialMeasurements::set_report_infos_(const AngularSpeedsFrame & a
 
 //-----------------------------------------------------------------------------
 void CheckupInertialMeasurements::add_diagnostic_(
-  const DiagnosticStatus & status,
-  const std::string & message)
+  const DiagnosticStatus & status, const std::string & message)
 {
   Diagnostic diagnostic;
   diagnostic.message = message;

@@ -1,16 +1,17 @@
 <?xml version="1.0"?>
 <package format="3">
   <name>romea_core_localisation_imu</name>
-  <version>0.0.0</version>
+  <version>1.0.0</version>
   <description>The romea core localisation imu library </description>
   <author email="jean.laneurit@inrae.fr">Jean Laneurit</author>
   <maintainer email="jean.laneurit@inrae.fr">Jean Laneurit</maintainer>
   <license>Apache License 2.0</license>
   <buildtool_depend condition="$ROS_VERSION == 1">catkin</buildtool_depend>
   <buildtool_depend condition="$ROS_VERSION == 2">ament_cmake</buildtool_depend>
+  <depend>romea_core_common</depend>
+  <depend>romea_core_imu</depend>
+  <depend>romea_core_localisation</depend>
   <export>
     <build_type>cmake</build_type>
   </export>
-  <depend>romea_core_imu</depend>
-  <depend>romea_core_localisation</depend>
 </package>

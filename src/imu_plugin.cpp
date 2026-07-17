@@ -44,14 +44,14 @@ IMUPlugin::IMUPlugin(std::unique_ptr<IMUAHRS> imu)
     "inertial_measurements", imu_->getRate(), imu_->getRate() * 0.1),
   attitude_diagnostic_(),
   inertial_measurement_diagnostic_(imu_->getAccelerationRange(), imu_->getAngularSpeedRange()),
-  debug_logger_()
+  logger_(nullptr)
 {
 }
 
 //-----------------------------------------------------------------------------
-void IMUPlugin::enable_debug_log(const std::string & logFilename)
+void IMUPlugin::register_logger(std::shared_ptr<Logger> logger)
 {
-  debug_logger_.init(logFilename);
+  logger_ = std::move(logger);
 }
 
 //-----------------------------------------------------------------------------

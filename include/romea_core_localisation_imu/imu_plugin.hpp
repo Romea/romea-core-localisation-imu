@@ -17,7 +17,7 @@
 
 // romea
 #include <romea_core_common/diagnostic/CheckupRate.hpp>
-#include <romea_core_common/log/SimpleFileLogger.hpp>
+#include <romea_core_common/log/Logger.hpp>
 #include <romea_core_imu/IMUAHRS.hpp>
 #include <romea_core_localisation/observation_angular_speed.hpp>
 #include <romea_core_localisation/observation_attitude.hpp>
@@ -43,7 +43,7 @@ class IMUPlugin
 public:
   explicit IMUPlugin(std::unique_ptr<IMUAHRS> imu);
 
-  void enable_debug_log(const std::string & logFilename);
+  void register_logger(std::shared_ptr<Logger> logger);
 
   void process_linear_speed(const Duration & stamp, const double & linearSpeed);
 
@@ -83,7 +83,7 @@ private:
   CheckupAttitude attitude_diagnostic_;
   CheckupInertialMeasurements inertial_measurement_diagnostic_;
 
-  SimpleFileLogger debug_logger_;
+  std::shared_ptr<Logger> logger_;
 };
 
 }  // namespace localisation

@@ -11,6 +11,8 @@
   <depend>romea_core_common</depend>
   <depend>romea_core_imu</depend>
   <depend>romea_core_localisation</depend>
+  <test_depend>libgtest-dev</test_depend>
+
   <export>
     <build_type>cmake</build_type>
   </export>
